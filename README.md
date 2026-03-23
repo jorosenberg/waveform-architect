@@ -1,3 +1,6 @@
+As a music producer learning sound design, I have been having trouble learning how to use different waveform modulations properly. I decided an app for visualizing just this would be perfect. This app helps me view the two oscillator waveforms creating a new waveform, showing how it affects loudness, and visualization of the phase as I change parameters. The web audio api was able to pretty much do all of this in the backend so learning the visualization math was the only real challenge. I believe it shows what I need it to, but I will play around with it and see what it shows me.    
+
+
 # **🎹 Waveform Architect**
 
 **Waveform Architect** is a high-fidelity, browser-based modular synthesis and signal visualization environment. Built with the **Web Audio API**, it allows users to explore complex frequency, amplitude, and phase modulation through a professional "rack-style" interface.
