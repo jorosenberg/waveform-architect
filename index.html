@@ -1,1254 +1,1747 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Waveform Architect</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<style>
-:root {
-  --rack:   #0b0a08;
-  --face:   #141210;
-  --inset:  #0d0c0a;
-  --lip:    #201e18;
-  --bdr:    #282420;
-  --silk:   #5a5446;
-  --silk2:  #807666;
-  --text:   #9c9280;
-  --amber:  #cfa012;
-  --amber2: rgba(207,160,18,0.35);
-  --ca:  #3a6bff;
-  --cb:  #9e35ff;
-  --co:  #00d09a;
-  --cl:  #df7e00;
-  --cf:  #d12e46;
-  --cg:  #1ebf52;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:14px}
-body{
-  font-family:'Bebas Neue',sans-serif;
-  background:var(--rack);
-  color:var(--text);
-  padding:1.4rem;
-  display:flex;
-  justify-content:center;
-  min-height:100vh;
-}
-.rack{
-  width:100%;max-width:1240px;
-  background:var(--face);
-  background-image:
-    repeating-linear-gradient(180deg,transparent,transparent 1px,rgba(255,255,255,0.01) 1px,rgba(255,255,255,0.01) 2px);
-  border:1px solid var(--bdr);
-  border-top:2px solid #2a271f;
-  border-bottom:3px solid #060504;
-  padding:1.3rem 1.4rem 1.5rem;
-  position:relative;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.035),0 32px 80px rgba(0,0,0,0.8);
-}
-/* Rack ear screws */
-.screw{
-  position:absolute;width:9px;height:9px;border-radius:50%;
-  background:radial-gradient(circle at 38% 35%,#322e26,#080705);
-  box-shadow:inset 0 1px 3px rgba(0,0,0,0.9),0 0 0 1px #181510;
-}
-.s-tl{top:11px;left:11px} .s-tr{top:11px;right:11px}
-.s-bl{bottom:11px;left:11px} .s-br{bottom:11px;right:11px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waveform Architect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=VT323&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --rack: #0b0a08;
+            --face: #141210;
+            --inset: #0d0c0a;
+            --lip: #201e18;
+            --bdr: #282420;
+            --silk: #5a5446;
+            --silk2: #807666;
+            --text: #9c9280;
+            --amber: #cfa012;
+            --amber2: rgba(207, 160, 18, 0.35);
+            --ca: #3a6bff;
+            --cb: #9e35ff;
+            --co: #00d09a;
+            --cl: #df7e00;
+            --cf: #d12e46;
+            --cg: #1ebf52;
+        }
 
-/* ─── HEADER ─────────────────────────────────── */
-header{
-  display:flex;align-items:center;gap:10px;
-  padding-bottom:.85rem;margin-bottom:1rem;
-  border-bottom:1px solid var(--bdr);flex-wrap:wrap;
-}
-.brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.pwr-led{
-  width:8px;height:8px;border-radius:50%;
-  background:#181410;border:1px solid #222016;
-  box-shadow:inset 0 1px 2px rgba(0,0,0,0.9);
-  flex-shrink:0;transition:background .3s,box-shadow .3s;
-}
-.pwr-led.on{background:var(--cg);box-shadow:0 0 10px rgba(30,191,82,.7)}
-.brand-name{font-size:1.2rem;letter-spacing:4px;color:var(--silk2);line-height:1}
-.brand-sub{
-  font-family:'Share Tech Mono',monospace;
-  font-size:.48rem;letter-spacing:3px;text-transform:uppercase;
-  color:var(--silk);margin-top:2px;
-}
-.root-ctrl{
-  display:flex;align-items:stretch;height:30px;
-  background:var(--inset);border:1px solid var(--bdr);overflow:hidden;
-  margin-left:auto;
-}
-.root-tag{
-  font-size:.48rem;letter-spacing:3px;
-  color:var(--silk);padding:0 9px;border-right:1px solid var(--bdr);
-  display:flex;align-items:center;
-}
-.root-btn{
-  background:transparent;border:none;color:var(--silk);
-  cursor:pointer;padding:0 8px;font-size:.65rem;
-  transition:color .1s,background .1s;
-}
-.root-btn:hover{color:var(--text);background:rgba(255,255,255,.04)}
-#root-name{
-  font-family:'Share Tech Mono',monospace;font-size:1.25rem;
-  color:var(--amber);text-shadow:0 0 8px rgba(207,160,18,.5);
-  min-width:44px;text-align:center;display:flex;align-items:center;justify-content:center;
-}
-#root-hz{
-  font-family:'Share Tech Mono',monospace;font-size:.75rem;
-  color:var(--amber2);padding:0 10px;border-left:1px solid var(--bdr);
-  display:flex;align-items:center;min-width:78px;
-}
-.pwr-btn{
-  background:var(--inset);border:1px solid var(--bdr);color:var(--silk);
-  height:30px;padding:0 1rem;
-  font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:3px;
-  cursor:pointer;white-space:nowrap;
-  transition:border-color .15s,color .15s,box-shadow .15s;
-}
-.pwr-btn.on{border-color:var(--cg);color:var(--cg);box-shadow:0 0 10px rgba(30,191,82,.18)}
-.pwr-btn:hover{border-color:var(--silk2);color:var(--silk2)}
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
 
-/* ─── PRESETS ────────────────────────────────── */
-.presets{display:flex;align-items:center;gap:5px;margin-bottom:1.1rem;flex-wrap:wrap}
-.pre-lbl{font-size:.52rem;letter-spacing:3px;color:var(--silk);margin-right:3px;white-space:nowrap}
-.btn-p{
-  background:var(--inset);border:1px solid var(--bdr);color:var(--silk);
-  padding:3px 10px;font-family:'Bebas Neue',sans-serif;font-size:.68rem;letter-spacing:2px;
-  cursor:pointer;transition:border-color .12s,color .12s;
-}
-.btn-p:hover{border-color:var(--silk2);color:var(--text)}
-.btn-p.active{border-color:var(--ca);color:var(--ca);background:rgba(58,107,255,.07)}
+        html {
+            font-size: 14px
+        }
 
-/* ─── VISUALISER HOUSING ─────────────────────── */
-.vis-box{
-  background:#000;
-  border:1px solid #161210;
-  padding:8px 8px 5px;
-  margin-bottom:1.2rem;
-  position:relative;
-  display:flex;flex-direction:column;gap:2px;
-  box-shadow:inset 0 0 80px rgba(0,0,0,1);
-}
-/* CRT overlay */
-.vis-box::after{
-  content:'';position:absolute;inset:0;
-  background:repeating-linear-gradient(to bottom,transparent,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);
-  pointer-events:none;z-index:5;
-}
-.vis-bar{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:2px 4px;
-}
-.vlbl{
-  font-size:.47rem;letter-spacing:2.5px;
-  color:#252018;font-family:'Bebas Neue',sans-serif;
-}
-.vinfo{
-  font-family:'Share Tech Mono',monospace;font-size:.75rem;
-  color:rgba(0,208,154,.5);letter-spacing:.5px;
-}
-canvas{width:100%;display:block}
-#cv-scroll{height:185px}
-.vis-mid{display:flex;gap:2px;margin-top:2px}
-#cv-scope{flex:3;height:130px;background:rgba(255,255,255,.006)}
-#cv-lissa{flex:2;height:130px;background:rgba(0,0,0,.4)}
-#cv-spec{height:62px;margin-top:2px}
+        body {
+            font-family: 'Oswald', sans-serif;
+            background: var(--rack);
+            color: var(--text);
+            padding: 1.4rem;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
-/* ─── MODULE GRID ────────────────────────────── */
-.dash{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(195px,1fr));
-  gap:8px;margin-bottom:10px;
-}
-.mod{
-  background:rgba(0,0,0,.22);
-  background-image:repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(255,255,255,.006) 4px,rgba(255,255,255,.006) 8px);
-  border:1px solid rgba(255,255,255,.03);
-  border-left:2px solid transparent;
-  padding:.8rem .75rem .65rem;
-}
-.mod[data-c=a]{border-left-color:var(--ca)}
-.mod[data-c=b]{border-left-color:var(--cb)}
-.mod[data-c=l]{border-left-color:var(--cl)}
-.mod[data-c=f]{border-left-color:var(--cf)}
-.mod[data-c=g]{border-left-color:var(--cg)}
+        .rack {
+            width: 100%;
+            max-width: 1240px;
+            background: var(--face);
+            background-image:
+                repeating-linear-gradient(180deg, transparent, transparent 1px, rgba(255, 255, 255, 0.01) 1px, rgba(255, 255, 255, 0.01) 2px);
+            border: 1px solid var(--bdr);
+            border-top: 2px solid #2a271f;
+            border-bottom: 3px solid #060504;
+            padding: 1.3rem 1.4rem 1.5rem;
+            position: relative;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 32px 80px rgba(0, 0, 0, 0.8);
+        }
 
-.mod-hd{
-  display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;
-  padding-bottom:.45rem;margin-bottom:.6rem;
-  border-bottom:1px solid rgba(255,255,255,.04);
-}
-.mod-id{font-size:.82rem;letter-spacing:3px;line-height:1}
-.mod-sub{
-  font-family:'Share Tech Mono',monospace;font-size:.48rem;
-  letter-spacing:2px;text-transform:uppercase;color:var(--silk);
-}
-.mod[data-c=a] .mod-id{color:var(--ca)}
-.mod[data-c=b] .mod-id{color:var(--cb)}
-.mod[data-c=l] .mod-id{color:var(--cl)}
-.mod[data-c=f] .mod-id{color:var(--cf)}
-.mod[data-c=g] .mod-id{color:var(--cg)}
+        /* Rack ear screws */
+        .screw {
+            position: absolute;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 38% 35%, #322e26, #080705);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 0 1px #181510;
+        }
 
-.note-out{
-  font-family:'Share Tech Mono',monospace;
-  font-size:1.1rem;color:var(--amber);
-  text-shadow:0 0 6px rgba(207,160,18,.4);margin-left:auto;
-}
-.badge{
-  font-family:'Share Tech Mono',monospace;font-size:.6rem;
-  color:var(--amber2);background:rgba(0,0,0,.4);padding:1px 5px;
-}
+        .s-tl {
+            top: 11px;
+            left: 11px
+        }
 
-/* wave toggles */
-.wave-strip{
-  display:flex;background:var(--inset);border:1px solid var(--bdr);
-  margin-bottom:.6rem;overflow:hidden;
-}
-.wt{
-  flex:1;background:transparent;border:none;border-right:1px solid var(--bdr);
-  padding:4px 0;cursor:pointer;opacity:.18;transition:opacity .1s,background .1s;
-}
-.wt:last-child{border-right:none}
-.wt:hover{opacity:.5}
-.wt.on{opacity:1;background:rgba(255,255,255,.035)}
-.wt svg{width:22px;height:12px;stroke:#bbb;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;display:block;margin:auto}
-.mod[data-c=a] .wt.on svg{stroke:var(--ca);filter:drop-shadow(0 0 3px rgba(58,107,255,.5))}
-.mod[data-c=b] .wt.on svg{stroke:var(--cb);filter:drop-shadow(0 0 3px rgba(158,53,255,.5))}
-.mod[data-c=l] .wt.on svg{stroke:var(--cl);filter:drop-shadow(0 0 3px rgba(223,126,0,.5))}
+        .s-tr {
+            top: 11px;
+            right: 11px
+        }
 
-/* selects */
-select{
-  background:var(--inset);border:1px solid var(--bdr);color:var(--text);
-  padding:5px 22px 5px 7px;
-  font-family:'Bebas Neue',sans-serif;font-size:.72rem;letter-spacing:.5px;
-  width:100%;margin-bottom:.5rem;outline:none;cursor:pointer;
-  appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6' fill='none' stroke='%23383024' stroke-width='1.5'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 7px center;
-  transition:border-color .12s;
-}
-select:focus{border-color:var(--silk)}
+        .s-bl {
+            bottom: 11px;
+            left: 11px
+        }
 
-/* knobs */
-.kg{display:grid;grid-template-columns:1fr 1fr;gap:5px;justify-items:center}
-.kw{display:flex;flex-direction:column;align-items:center;margin-bottom:.3rem}
-.klbl{
-  font-size:.5rem;letter-spacing:2px;color:var(--silk);
-  margin-bottom:5px;text-align:center;
-}
-.kval{
-  font-family:'Share Tech Mono',monospace;font-size:.88rem;
-  color:var(--amber);text-shadow:0 0 5px rgba(207,160,18,.3);
-  margin-top:4px;padding:1px 5px;min-width:44px;text-align:center;
-  background:rgba(0,0,0,.4);border:1px solid transparent;
-  cursor:text;user-select:none;transition:border-color .1s;
-}
-.kval:hover{border-color:var(--bdr)}
-.knob{
-  width:44px;height:44px;border-radius:50%;
-  background:radial-gradient(ellipse at 40% 33%,#2a2820,#0c0b09);
-  position:relative;cursor:ns-resize;touch-action:none;
-  box-shadow:0 4px 12px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,255,255,.055),0 0 0 1px rgba(0,0,0,.7);
-}
-.knob::before{
-  content:'';position:absolute;inset:-3px;border-radius:50%;
-  border:1px solid rgba(255,255,255,.03);pointer-events:none;
-}
-.knob::after{
-  content:'';position:absolute;top:6px;left:50%;
-  width:2px;height:9px;border-radius:1px;transform:translateX(-50%);
-  background:var(--ki,var(--ca));box-shadow:0 0 6px var(--ki,var(--ca));
-}
-.knob[data-c=b]{--ki:var(--cb)}
-.knob[data-c=l]{--ki:var(--cl)}
-.knob[data-c=f]{--ki:var(--cf)}
-.knob[data-c=g]{--ki:var(--cg)}
+        .s-br {
+            bottom: 11px;
+            right: 11px
+        }
 
-/* inline canvas (filter response, lfo viz) */
-.mod-canvas{
-  width:100%;display:block;margin-top:.5rem;
-  background:rgba(0,0,0,.4);border:1px solid var(--bdr);
-}
+        /* ─── HEADER ─────────────────────────────────── */
+        header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: .85rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--bdr);
+            flex-wrap: wrap;
+        }
 
-/* ─── HELP PANEL ─────────────────────────────── */
-#help-panel{
-  background:rgba(0,0,0,.45);
-  border:1px solid var(--bdr);
-  border-left:2px solid var(--amber);
-  padding:.6rem 1rem;
-  margin-bottom:1rem;
-  min-height:52px;
-  display:flex;align-items:center;gap:1.2rem;
-  transition:border-left-color .2s;
-}
-#help-panel.hl-a{border-left-color:var(--ca)}
-#help-panel.hl-b{border-left-color:var(--cb)}
-#help-panel.hl-l{border-left-color:var(--cl)}
-#help-panel.hl-f{border-left-color:var(--cf)}
-#help-panel.hl-g{border-left-color:var(--cg)}
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0
+        }
 
-#help-title{
-  font-size:.82rem;letter-spacing:4px;color:var(--amber);
-  white-space:nowrap;flex-shrink:0;min-width:160px;
-}
-#help-text{
-  font-family:'Share Tech Mono',monospace;
-  font-size:.66rem;color:var(--silk2);line-height:1.65;
-  letter-spacing:.3px;
-}
+        .pwr-led {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #181410;
+            border: 1px solid #222016;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+            flex-shrink: 0;
+            transition: background .3s, box-shadow .3s;
+        }
 
-/* fx note */
-.fx-note{
-  font-family:'Share Tech Mono',monospace;
-  font-size:.56rem;color:var(--silk);line-height:1.75;
-  margin-top:.45rem;letter-spacing:.3px;
-}
-.fx-note strong{color:var(--silk2)}
+        .pwr-led.on {
+            background: var(--cg);
+            box-shadow: 0 0 10px rgba(30, 191, 82, .7)
+        }
 
-/* hints */
-.hints{
-  padding-top:.8rem;border-top:1px solid var(--bdr);
-  display:flex;gap:1rem;flex-wrap:wrap;
-}
-.hint{
-  font-size:.52rem;letter-spacing:2px;color:var(--silk);
-  display:flex;align-items:center;gap:4px;
-}
-kbd{
-  font-family:'Share Tech Mono',monospace;font-size:.78rem;
-  background:var(--inset);border:1px solid var(--bdr);border-bottom:2px solid #050403;
-  padding:0 5px;color:var(--amber);
-}
-</style>
+        .brand-name {
+            font-size: 1.4rem;
+            font-weight: 500;
+            letter-spacing: 4px;
+            color: var(--silk2);
+            line-height: 1
+        }
+
+        .brand-sub {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--silk);
+            margin-top: 2px;
+        }
+
+        .root-ctrl {
+            display: flex;
+            align-items: stretch;
+            height: 34px;
+            background: var(--inset);
+            border: 1px solid var(--bdr);
+            overflow: hidden;
+            margin-left: auto;
+        }
+
+        .root-tag {
+            font-size: .7rem;
+            letter-spacing: 3px;
+            font-weight: 500;
+            color: var(--silk);
+            padding: 0 9px;
+            border-right: 1px solid var(--bdr);
+            display: flex;
+            align-items: center;
+            text-transform: uppercase;
+        }
+
+        .root-btn {
+            background: transparent;
+            border: none;
+            color: var(--silk);
+            cursor: pointer;
+            padding: 0 10px;
+            font-size: .8rem;
+            transition: color .1s, background .1s;
+        }
+
+        .root-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, .04)
+        }
+
+        #root-name {
+            font-family: 'VT323', monospace;
+            font-size: 1.6rem;
+            color: var(--amber);
+            text-shadow: 0 0 8px rgba(207, 160, 18, .5);
+            min-width: 44px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #root-hz {
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            color: var(--amber2);
+            padding: 0 10px;
+            border-left: 1px solid var(--bdr);
+            display: flex;
+            align-items: center;
+            min-width: 85px;
+        }
+
+        .pwr-btn {
+            background: var(--inset);
+            border: 1px solid var(--bdr);
+            color: var(--silk);
+            height: 34px;
+            padding: 0 1rem;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            white-space: nowrap;
+            text-transform: uppercase;
+            transition: border-color .15s, color .15s, box-shadow .15s;
+        }
+
+        .pwr-btn.on {
+            border-color: var(--cg);
+            color: var(--cg);
+            box-shadow: 0 0 10px rgba(30, 191, 82, .18)
+        }
+
+        .pwr-btn:hover {
+            border-color: var(--silk2);
+            color: var(--silk2)
+        }
+
+        /* ─── PRESETS ────────────────────────────────── */
+        .presets {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 1.1rem;
+            flex-wrap: wrap
+        }
+
+        .pre-lbl {
+            font-size: .85rem;
+            letter-spacing: 2px;
+            color: var(--silk);
+            margin-right: 3px;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        .btn-p {
+            background: var(--inset);
+            border: 1px solid var(--bdr);
+            color: var(--silk);
+            padding: 3px 12px;
+            font-family: 'Oswald', sans-serif;
+            font-size: .85rem;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: border-color .12s, color .12s;
+            text-transform: uppercase;
+        }
+
+        .btn-p:hover {
+            border-color: var(--silk2);
+            color: var(--text)
+        }
+
+        .btn-p.active {
+            border-color: var(--ca);
+            color: var(--ca);
+            background: rgba(58, 107, 255, .07)
+        }
+
+        /* ─── VISUALISER HOUSING ─────────────────────── */
+        .vis-box {
+            background: #000;
+            border: 1px solid #161210;
+            padding: 8px 8px 5px;
+            margin-bottom: 1.2rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            box-shadow: inset 0 0 80px rgba(0, 0, 0, 1);
+        }
+
+        /* CRT overlay */
+        .vis-box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(to bottom, transparent, transparent 3px, rgba(0, 0, 0, .05) 3px, rgba(0, 0, 0, .05) 4px);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .vis-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px;
+        }
+
+        .vlbl {
+            font-size: .8rem;
+            letter-spacing: 2px;
+            color: #42392c;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .vinfo {
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+            color: rgba(0, 208, 154, .5);
+            letter-spacing: 1px;
+        }
+
+        canvas {
+            width: 100%;
+            display: block
+        }
+
+        #cv-scroll {
+            height: 185px
+        }
+
+        .vis-mid {
+            display: flex;
+            gap: 2px;
+            margin-top: 2px
+        }
+
+        #cv-scope {
+            flex: 3;
+            height: 130px;
+            background: rgba(255, 255, 255, .006)
+        }
+
+        #cv-lissa {
+            flex: 2;
+            height: 130px;
+            background: rgba(0, 0, 0, .4)
+        }
+
+        #cv-spec {
+            height: 62px;
+            margin-top: 2px
+        }
+
+        /* ─── MODULE GRID ────────────────────────────── */
+        .dash {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .mod {
+            background: rgba(0, 0, 0, .22);
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(255, 255, 255, .006) 4px, rgba(255, 255, 255, .006) 8px);
+            border: 1px solid rgba(255, 255, 255, .03);
+            border-left: 2px solid transparent;
+            padding: .8rem .75rem .65rem;
+        }
+
+        .mod[data-c=a] {
+            border-left-color: var(--ca)
+        }
+
+        .mod[data-c=b] {
+            border-left-color: var(--cb)
+        }
+
+        .mod[data-c=l] {
+            border-left-color: var(--cl)
+        }
+
+        .mod[data-c=f] {
+            border-left-color: var(--cf)
+        }
+
+        .mod[data-c=g] {
+            border-left-color: var(--cg)
+        }
+
+        .mod-hd {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding-bottom: .45rem;
+            margin-bottom: .6rem;
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
+        }
+
+        .mod-id {
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .mod-sub {
+            font-family: 'VT323', monospace;
+            font-size: .9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--silk);
+        }
+
+        .mod[data-c=a] .mod-id {
+            color: var(--ca)
+        }
+
+        .mod[data-c=b] .mod-id {
+            color: var(--cb)
+        }
+
+        .mod[data-c=l] .mod-id {
+            color: var(--cl)
+        }
+
+        .mod[data-c=f] .mod-id {
+            color: var(--cf)
+        }
+
+        .mod[data-c=g] .mod-id {
+            color: var(--cg)
+        }
+
+        .note-out {
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+            color: var(--amber);
+            text-shadow: 0 0 6px rgba(207, 160, 18, .4);
+            margin-left: auto;
+        }
+
+        .badge {
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+            color: var(--amber2);
+            background: rgba(0, 0, 0, .4);
+            padding: 1px 5px;
+        }
+
+        /* wave toggles */
+        .wave-strip {
+            display: flex;
+            background: var(--inset);
+            border: 1px solid var(--bdr);
+            margin-bottom: .6rem;
+            overflow: hidden;
+        }
+
+        .wt {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-right: 1px solid var(--bdr);
+            padding: 4px 0;
+            cursor: pointer;
+            opacity: .18;
+            transition: opacity .1s, background .1s;
+        }
+
+        .wt:last-child {
+            border-right: none
+        }
+
+        .wt:hover {
+            opacity: .5
+        }
+
+        .wt.on {
+            opacity: 1;
+            background: rgba(255, 255, 255, .035)
+        }
+
+        .wt svg {
+            width: 22px;
+            height: 12px;
+            stroke: #bbb;
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            display: block;
+            margin: auto
+        }
+
+        .mod[data-c=a] .wt.on svg {
+            stroke: var(--ca);
+            filter: drop-shadow(0 0 3px rgba(58, 107, 255, .5))
+        }
+
+        .mod[data-c=b] .wt.on svg {
+            stroke: var(--cb);
+            filter: drop-shadow(0 0 3px rgba(158, 53, 255, .5))
+        }
+
+        .mod[data-c=l] .wt.on svg {
+            stroke: var(--cl);
+            filter: drop-shadow(0 0 3px rgba(223, 126, 0, .5))
+        }
+
+        /* selects */
+        select {
+            background: var(--inset);
+            border: 1px solid var(--bdr);
+            color: var(--text);
+            padding: 5px 22px 5px 7px;
+            font-family: 'Oswald', sans-serif;
+            font-size: .9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            width: 100%;
+            margin-bottom: .5rem;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6' fill='none' stroke='%23383024' stroke-width='1.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 7px center;
+            transition: border-color .12s;
+        }
+
+        select:focus {
+            border-color: var(--silk)
+        }
+
+        /* knobs */
+        .kg {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            justify-items: center
+        }
+
+        .kw {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: .3rem
+        }
+
+        .klbl {
+            font-size: .7rem;
+            letter-spacing: 1px;
+            color: var(--silk);
+            margin-bottom: 5px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .kval {
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            color: var(--amber);
+            text-shadow: 0 0 5px rgba(207, 160, 18, .3);
+            margin-top: 4px;
+            padding: 1px 5px;
+            min-width: 44px;
+            text-align: center;
+            background: rgba(0, 0, 0, .4);
+            border: 1px solid transparent;
+            cursor: text;
+            user-select: none;
+            transition: border-color .1s;
+        }
+
+        .kval:hover {
+            border-color: var(--bdr)
+        }
+
+        .knob {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at 40% 33%, #2a2820, #0c0b09);
+            position: relative;
+            cursor: ns-resize;
+            touch-action: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .75), inset 0 1px 0 rgba(255, 255, 255, .055), 0 0 0 1px rgba(0, 0, 0, .7);
+        }
+
+        .knob::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, .03);
+            pointer-events: none;
+        }
+
+        .knob::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            width: 2px;
+            height: 9px;
+            border-radius: 1px;
+            transform: translateX(-50%);
+            background: var(--ki, var(--ca));
+            box-shadow: 0 0 6px var(--ki, var(--ca));
+        }
+
+        .knob[data-c=b] {
+            --ki: var(--cb)
+        }
+
+        .knob[data-c=l] {
+            --ki: var(--cl)
+        }
+
+        .knob[data-c=f] {
+            --ki: var(--cf)
+        }
+
+        .knob[data-c=g] {
+            --ki: var(--cg)
+        }
+
+        /* inline canvas (filter response, lfo viz) */
+        .mod-canvas {
+            width: 100%;
+            display: block;
+            margin-top: .5rem;
+            background: rgba(0, 0, 0, .4);
+            border: 1px solid var(--bdr);
+        }
+
+        /* ─── HELP PANEL ─────────────────────────────── */
+        #help-panel {
+            background: rgba(0, 0, 0, .55);
+            border: 1px solid var(--bdr);
+            border-left: 4px solid var(--amber);
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 0.6rem;
+            transition: border-left-color .2s;
+        }
+
+        #help-panel.hl-a {
+            border-left-color: var(--ca)
+        }
+
+        #help-panel.hl-b {
+            border-left-color: var(--cb)
+        }
+
+        #help-panel.hl-l {
+            border-left-color: var(--cl)
+        }
+
+        #help-panel.hl-f {
+            border-left-color: var(--cf)
+        }
+
+        #help-panel.hl-g {
+            border-left-color: var(--cg)
+        }
+
+        #help-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.15rem;
+            letter-spacing: 3px;
+            color: var(--amber);
+            white-space: normal;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        #help-text {
+            font-family: 'VT323', monospace;
+            font-size: 1.35rem;
+            color: var(--silk2);
+            line-height: 1.4;
+            letter-spacing: 0.5px;
+        }
+
+        /* fx note */
+        .fx-note {
+            font-family: 'VT323', monospace;
+            font-size: 1.05rem;
+            color: var(--silk);
+            line-height: 1.4;
+            margin-top: .45rem;
+            letter-spacing: .3px;
+        }
+
+        .fx-note strong {
+            color: var(--silk2)
+        }
+
+        /* hints */
+        .hints {
+            padding-top: .8rem;
+            border-top: 1px solid var(--bdr);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .hint {
+            font-size: .85rem;
+            letter-spacing: 1px;
+            color: var(--silk);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            text-transform: uppercase;
+        }
+
+        kbd {
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+            background: var(--inset);
+            border: 1px solid var(--bdr);
+            border-bottom: 2px solid #050403;
+            padding: 0 5px;
+            color: var(--amber);
+        }
+    </style>
 </head>
+
 <body>
-<div class="rack">
-  <div class="screw s-tl"></div><div class="screw s-tr"></div>
-  <div class="screw s-bl"></div><div class="screw s-br"></div>
+    <div class="rack">
+        <div class="screw s-tl"></div>
+        <div class="screw s-tr"></div>
+        <div class="screw s-bl"></div>
+        <div class="screw s-br"></div>
 
-  <!-- HEADER -->
-  <header>
-    <div class="brand">
-      <div class="pwr-led" id="pwr-led"></div>
-      <div>
-        <div class="brand-name">Waveform Architect</div>
-        <div class="brand-sub">Synthesis &amp; Modulation System · V6.0</div>
-      </div>
+        <header>
+            <div class="brand">
+                <div class="pwr-led" id="pwr-led"></div>
+                <div>
+                    <div class="brand-name">Waveform Architect</div>
+                    <div class="brand-sub">Synthesis &amp; Modulation System · V6.0</div>
+                </div>
+            </div>
+            <div class="root-ctrl" id="root-ctrl" data-hk="root">
+                <span class="root-tag">Root</span>
+                <button class="root-btn" id="root-dn">▼</button>
+                <span id="root-name">A4</span>
+                <button class="root-btn" id="root-up">▲</button>
+                <span id="root-hz">440.0 Hz</span>
+            </div>
+            <button id="pwr" class="pwr-btn">Power On</button>
+        </header>
+
+        <div class="presets">
+            <span class="pre-lbl">Presets —</span>
+            <button class="btn-p" data-p="0">① Sine</button>
+            <button class="btn-p" data-p="1">② Tremolo AM</button>
+            <button class="btn-p" data-p="2">③ Bell FM</button>
+            <button class="btn-p" data-p="3">④ Dalek Ring</button>
+            <button class="btn-p" data-p="4">⑤ Brass FM</button>
+            <button class="btn-p" data-p="5">⑥ Filter Sweep</button>
+        </div>
+
+        <div class="vis-box">
+            <div class="vis-bar">
+                <span class="vlbl">① Chart Recorder — Live Waveform Scroll</span>
+                <span class="vinfo" id="vis-inf"></span>
+            </div>
+            <canvas id="cv-scroll" data-hk="vis-scroll"></canvas>
+
+            <div class="vis-mid">
+                <canvas id="cv-scope" data-hk="vis-scope"></canvas>
+                <canvas id="cv-lissa" data-hk="vis-lissa"></canvas>
+            </div>
+
+            <div class="vis-bar" style="margin-top:3px">
+                <span class="vlbl">② Scope · <span style="color:rgba(58,107,255,.5)">A</span> · <span
+                        style="color:rgba(158,53,255,.5)">B</span> · <span style="color:rgba(0,208,154,.7)">Out</span> ·
+                    locked to Osc A zero-crossing</span>
+                <span class="vlbl">③ Audio Imager · <span style="color:rgba(0,208,154,.5)">A vs Output</span></span>
+            </div>
+            <canvas id="cv-spec" data-hk="vis-spec"></canvas>
+            <div class="vis-bar">
+                <span class="vlbl">④ Spectrum Analyser — <span style="color:rgba(58,107,255,.5)">Sub/Bass</span> · <span
+                        style="color:rgba(207,160,18,.6)">Mids</span> · <span
+                        style="color:rgba(0,208,154,.5)">Highs</span></span>
+                <span class="vinfo" id="spec-inf"></span>
+            </div>
+        </div>
+
+        <div class="dash">
+
+            <div class="mod" data-c="a">
+                <div class="mod-hd">
+                    <span class="mod-id">Osc A</span>
+                    <span class="mod-sub">Carrier</span>
+                    <span class="note-out" id="note-a">--</span>
+                </div>
+                <div class="wave-strip" data-osc="a" data-hk="wave-a">
+                    <button class="wt on" data-v="sine"><svg viewBox="0 0 40 20">
+                            <path d="M0,10 C5,0 15,0 20,10 C25,20 35,20 40,10" />
+                        </svg></button>
+                    <button class="wt" data-v="square"><svg viewBox="0 0 40 20">
+                            <path d="M0,18 L0,2 L20,2 L20,18 L40,18" />
+                        </svg></button>
+                    <button class="wt" data-v="sawtooth"><svg viewBox="0 0 40 20">
+                            <path d="M0,18 L20,2 L20,18 L40,2" />
+                        </svg></button>
+                    <button class="wt" data-v="triangle"><svg viewBox="0 0 40 20">
+                            <path d="M0,10 L10,2 L30,18 L40,10" />
+                        </svg></button>
+                </div>
+                <div class="kg">
+                    <div class="kw"><span class="klbl">Octave</span>
+                        <div class="knob" id="kn-a-oct" data-hk="a-oct" data-min="-3" data-max="3" data-v="0"></div>
+                        <span class="kval" id="vl-a-oct">0</span>
+                    </div>
+                    <div class="kw"><span class="klbl">Semitone</span>
+                        <div class="knob" id="kn-a-semi" data-hk="a-semi" data-min="-12" data-max="12" data-v="0"></div>
+                        <span class="kval" id="vl-a-semi">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mod" data-c="b">
+                <div class="mod-hd">
+                    <span class="mod-id">Osc B</span>
+                    <span class="mod-sub">Modulator</span>
+                    <span class="note-out" id="note-b">--</span>
+                    <span class="badge" id="ratio">—</span>
+                </div>
+                <select id="sel-route" data-hk="route">
+                    <option value="none">Parallel — Independent</option>
+                    <option value="am">AM — Amplitude Modulation</option>
+                    <option value="fm">FM — Frequency Modulation</option>
+                    <option value="pm">PM — Phase Modulation</option>
+                    <option value="ring">Ring Modulation</option>
+                </select>
+                <div class="wave-strip" data-osc="b" data-hk="wave-b">
+                    <button class="wt on" data-v="sine"><svg viewBox="0 0 40 20">
+                            <path d="M0,10 C5,0 15,0 20,10 C25,20 35,20 40,10" />
+                        </svg></button>
+                    <button class="wt" data-v="square"><svg viewBox="0 0 40 20">
+                            <path d="M0,18 L0,2 L20,2 L20,18 L40,18" />
+                        </svg></button>
+                    <button class="wt" data-v="sawtooth"><svg viewBox="0 0 40 20">
+                            <path d="M0,18 L20,2 L20,18 L40,2" />
+                        </svg></button>
+                    <button class="wt" data-v="triangle"><svg viewBox="0 0 40 20">
+                            <path d="M0,10 L10,2 L30,18 L40,10" />
+                        </svg></button>
+                </div>
+                <div class="kg">
+                    <div class="kw"><span class="klbl">Octave</span>
+                        <div class="knob" id="kn-b-oct" data-c="b" data-hk="b-oct" data-min="-6" data-max="4"
+                            data-v="-3"></div><span class="kval" id="vl-b-oct">-3</span>
+                    </div>
+                    <div class="kw"><span class="klbl">Semitone</span>
+                        <div class="knob" id="kn-b-semi" data-c="b" data-hk="b-semi" data-min="-12" data-max="12"
+                            data-v="0"></div><span class="kval" id="vl-b-semi">0</span>
+                    </div>
+                    <div class="kw" style="grid-column:1/-1"><span class="klbl">Mod Amount</span>
+                        <div class="knob" id="kn-mod-amt" data-c="b" data-hk="mod-amt" data-min="0" data-max="100"
+                            data-v="50"></div><span class="kval" id="vl-mod-amt">50%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mod" data-c="l">
+                <div class="mod-hd">
+                    <span class="mod-id">LFO</span>
+                    <span class="mod-sub">Low-Freq Osc</span>
+                    <span class="note-out" id="lfo-rate-out" style="font-size:1.1rem">—</span>
+                </div>
+                <select id="sel-lfo-tgt" data-hk="lfo-tgt">
+                    <option value="off">Target — Off</option>
+                    <option value="vibrato">Vibrato (Carrier Pitch)</option>
+                    <option value="tremolo">Tremolo (Amplitude)</option>
+                    <option value="filter">Filter Cutoff Sweep</option>
+                    <option value="moddepth">Modulation Depth</option>
+                </select>
+                <div class="wave-strip" data-lfo="1" data-hk="wave-lfo">
+                    <button class="wt on" data-v="sine"><svg viewBox="0 0 40 20">
+                            <path d="M0,10 C5,0 15,0 20,10 C25,20 35,20 40,10" />
+                        </svg></button>
+                    <button class="wt" data-v="triangle"><svg viewBox="0 0 40 20">
+                            <path d="M0,10 L10,2 L30,18 L40,10" />
+                        </svg></button>
+                    <button class="wt" data-v="square"><svg viewBox="0 0 40 20">
+                            <path d="M0,18 L0,2 L20,2 L20,18 L40,18" />
+                        </svg></button>
+                    <button class="wt" data-v="sawtooth"><svg viewBox="0 0 40 20">
+                            <path d="M0,18 L20,2 L20,18 L40,2" />
+                        </svg></button>
+                </div>
+                <div class="kg">
+                    <div class="kw"><span class="klbl">Rate</span>
+                        <div class="knob" id="kn-lfo-rate" data-c="l" data-hk="lfo-rate" data-min="0" data-max="100"
+                            data-v="22"></div><span class="kval" id="vl-lfo-rate">0.5</span>
+                    </div>
+                    <div class="kw"><span class="klbl">Amount</span>
+                        <div class="knob" id="kn-lfo-amt" data-c="l" data-hk="lfo-amt" data-min="0" data-max="100"
+                            data-v="30"></div><span class="kval" id="vl-lfo-amt">30%</span>
+                    </div>
+                </div>
+                <canvas class="mod-canvas" id="cv-lfo" height="44"></canvas>
+            </div>
+
+            <div class="mod" data-c="f">
+                <div class="mod-hd">
+                    <span class="mod-id">Filter</span>
+                    <span class="mod-sub">Biquad</span>
+                </div>
+                <select id="sel-flt" data-hk="flt-type">
+                    <option value="bypass">Bypass — Off</option>
+                    <option value="lowpass">Low-Pass — Cuts Highs</option>
+                    <option value="highpass">High-Pass — Cuts Lows</option>
+                    <option value="bandpass">Band-Pass — Narrow Peak</option>
+                    <option value="notch">Notch — Band Reject</option>
+                    <option value="peaking">Peaking EQ — Bell Boost</option>
+                </select>
+                <div class="kg">
+                    <div class="kw"><span class="klbl">Cutoff</span>
+                        <div class="knob" id="kn-flt-f" data-c="f" data-hk="flt-f" data-min="0" data-max="100"
+                            data-v="60"></div><span class="kval" id="vl-flt-f">1.6k</span>
+                    </div>
+                    <div class="kw"><span class="klbl">Resonance</span>
+                        <div class="knob" id="kn-flt-q" data-c="f" data-hk="flt-q" data-min="0.1" data-max="20"
+                            data-v="1"></div><span class="kval" id="vl-flt-q">1.0</span>
+                    </div>
+                    <div class="kw"><span class="klbl">Gain dB</span>
+                        <div class="knob" id="kn-flt-g" data-c="f" data-hk="flt-g" data-min="-24" data-max="24"
+                            data-v="6"></div><span class="kval" id="vl-flt-g">+6</span>
+                    </div>
+                </div>
+                <canvas class="mod-canvas" id="cv-flt" height="72"></canvas>
+            </div>
+
+            <div class="mod" data-c="g">
+                <div class="mod-hd">
+                    <span class="mod-id">Global</span>
+                    <span class="mod-sub">Output FX</span>
+                </div>
+                <div class="kg">
+                    <div class="kw"><span class="klbl">Drive</span>
+                        <div class="knob" id="kn-drive" data-c="g" data-hk="drive" data-min="0" data-max="100"
+                            data-v="0"></div><span class="kval" id="vl-drive">0%</span>
+                    </div>
+                    <div class="kw"><span class="klbl">Master</span>
+                        <div class="knob" id="kn-master" data-c="g" data-hk="master" data-min="0" data-max="100"
+                            data-v="50"></div><span class="kval" id="vl-master">50%</span>
+                    </div>
+                </div>
+                <div class="fx-note">
+                    <strong>Drive</strong> — tanh saturation. Warmth at low %, grit at high.<br>
+                    <strong>Comp</strong> — always on. 3:1, −12dB. Keeps bass/treble balanced.<br>
+                    <strong>Master</strong> — logarithmic taper.
+                </div>
+            </div>
+
+        </div>
+        <div id="help-panel">
+            <span id="help-title">System Guide — Hover any module control</span>
+            <span id="help-text">Move your mouse over any knob, toggle, selector, or visualization display above for a
+                detailed explanation of its function.</span>
+        </div>
+
+        <div class="hints">
+            <span class="hint"><kbd>Space</kbd> Power</span>
+            <span class="hint"><kbd>↑</kbd><kbd>↓</kbd> Root ±semitone</span>
+            <span class="hint"><kbd>Shift</kbd>+<kbd>↑↓</kbd> ±octave</span>
+            <span class="hint"><kbd>1</kbd>–<kbd>6</kbd> Presets</span>
+            <span class="hint">Scroll wheel on knobs</span>
+            <span class="hint">Double-click value to type</span>
+        </div>
     </div>
-    <div class="root-ctrl" id="root-ctrl" data-hk="root">
-      <span class="root-tag">Root</span>
-      <button class="root-btn" id="root-dn">▼</button>
-      <span id="root-name">A4</span>
-      <button class="root-btn" id="root-up">▲</button>
-      <span id="root-hz">440.0 Hz</span>
-    </div>
-    <button id="pwr" class="pwr-btn">Power On</button>
-  </header>
-
-  <!-- PRESETS -->
-  <div class="presets">
-    <span class="pre-lbl">Presets —</span>
-    <button class="btn-p" data-p="0">① Sine</button>
-    <button class="btn-p" data-p="1">② Tremolo AM</button>
-    <button class="btn-p" data-p="2">③ Bell FM</button>
-    <button class="btn-p" data-p="3">④ Dalek Ring</button>
-    <button class="btn-p" data-p="4">⑤ Brass FM</button>
-    <button class="btn-p" data-p="5">⑥ Filter Sweep</button>
-  </div>
-
-  <!-- VISUALISER -->
-  <div class="vis-box">
-    <div class="vis-bar">
-      <span class="vlbl">① Chart Recorder — Live Waveform Scroll</span>
-      <span class="vinfo" id="vis-inf"></span>
-    </div>
-    <canvas id="cv-scroll"></canvas>
-
-    <div class="vis-mid">
-      <canvas id="cv-scope"></canvas>
-      <canvas id="cv-lissa"></canvas>
-    </div>
-
-    <div class="vis-bar" style="margin-top:3px">
-      <span class="vlbl">② Scope · <span style="color:rgba(58,107,255,.5)">A</span> · <span style="color:rgba(158,53,255,.5)">B</span> · <span style="color:rgba(0,208,154,.7)">Out</span> · locked to Osc A zero-crossing</span>
-      <span class="vlbl">③ Audio Imager · <span style="color:rgba(0,208,154,.5)">A vs Output</span></span>
-    </div>
-    <canvas id="cv-spec"></canvas>
-    <div class="vis-bar">
-      <span class="vlbl">④ Spectrum Analyser — <span style="color:rgba(58,107,255,.5)">Sub/Bass</span> · <span style="color:rgba(207,160,18,.6)">Mids</span> · <span style="color:rgba(0,208,154,.5)">Highs</span></span>
-      <span class="vinfo" id="spec-inf"></span>
-    </div>
-  </div>
-
-  <!-- MODULES -->
-  <div class="dash">
-
-    <!-- OSC A -->
-    <div class="mod" data-c="a">
-      <div class="mod-hd">
-        <span class="mod-id">Osc A</span>
-        <span class="mod-sub">Carrier</span>
-        <span class="note-out" id="note-a">--</span>
-      </div>
-      <div class="wave-strip" data-osc="a" data-hk="wave-a">
-        <button class="wt on" data-v="sine"    ><svg viewBox="0 0 40 20"><path d="M0,10 C5,0 15,0 20,10 C25,20 35,20 40,10"/></svg></button>
-        <button class="wt"    data-v="square"  ><svg viewBox="0 0 40 20"><path d="M0,18 L0,2 L20,2 L20,18 L40,18"/></svg></button>
-        <button class="wt"    data-v="sawtooth"><svg viewBox="0 0 40 20"><path d="M0,18 L20,2 L20,18 L40,2"/></svg></button>
-        <button class="wt"    data-v="triangle"><svg viewBox="0 0 40 20"><path d="M0,10 L10,2 L30,18 L40,10"/></svg></button>
-      </div>
-      <div class="kg">
-        <div class="kw"><span class="klbl">Octave</span><div class="knob" id="kn-a-oct" data-hk="a-oct" data-min="-3" data-max="3" data-v="0"></div><span class="kval" id="vl-a-oct">0</span></div>
-        <div class="kw"><span class="klbl">Semitone</span><div class="knob" id="kn-a-semi" data-hk="a-semi" data-min="-12" data-max="12" data-v="0"></div><span class="kval" id="vl-a-semi">0</span></div>
-      </div>
-    </div>
-
-    <!-- OSC B -->
-    <div class="mod" data-c="b">
-      <div class="mod-hd">
-        <span class="mod-id">Osc B</span>
-        <span class="mod-sub">Modulator</span>
-        <span class="note-out" id="note-b">--</span>
-        <span class="badge" id="ratio">—</span>
-      </div>
-      <select id="sel-route" data-hk="route">
-        <option value="none">Parallel — Independent</option>
-        <option value="am">AM — Amplitude Modulation</option>
-        <option value="fm">FM — Frequency Modulation</option>
-        <option value="pm">PM — Phase Modulation</option>
-        <option value="ring">Ring Modulation</option>
-      </select>
-      <div class="wave-strip" data-osc="b" data-hk="wave-b">
-        <button class="wt on" data-v="sine"    ><svg viewBox="0 0 40 20"><path d="M0,10 C5,0 15,0 20,10 C25,20 35,20 40,10"/></svg></button>
-        <button class="wt"    data-v="square"  ><svg viewBox="0 0 40 20"><path d="M0,18 L0,2 L20,2 L20,18 L40,18"/></svg></button>
-        <button class="wt"    data-v="sawtooth"><svg viewBox="0 0 40 20"><path d="M0,18 L20,2 L20,18 L40,2"/></svg></button>
-        <button class="wt"    data-v="triangle"><svg viewBox="0 0 40 20"><path d="M0,10 L10,2 L30,18 L40,10"/></svg></button>
-      </div>
-      <div class="kg">
-        <div class="kw"><span class="klbl">Octave</span><div class="knob" id="kn-b-oct" data-c="b" data-hk="b-oct" data-min="-6" data-max="4" data-v="-3"></div><span class="kval" id="vl-b-oct">-3</span></div>
-        <div class="kw"><span class="klbl">Semitone</span><div class="knob" id="kn-b-semi" data-c="b" data-hk="b-semi" data-min="-12" data-max="12" data-v="0"></div><span class="kval" id="vl-b-semi">0</span></div>
-        <div class="kw" style="grid-column:1/-1"><span class="klbl">Mod Amount</span><div class="knob" id="kn-mod-amt" data-c="b" data-hk="mod-amt" data-min="0" data-max="100" data-v="50"></div><span class="kval" id="vl-mod-amt">50%</span></div>
-      </div>
-    </div>
-
-    <!-- LFO -->
-    <div class="mod" data-c="l">
-      <div class="mod-hd">
-        <span class="mod-id">LFO</span>
-        <span class="mod-sub">Low-Freq Osc</span>
-        <span class="note-out" id="lfo-rate-out" style="font-size:.9rem">—</span>
-      </div>
-      <select id="sel-lfo-tgt" data-hk="lfo-tgt">
-        <option value="off">Target — Off</option>
-        <option value="vibrato">Vibrato (Carrier Pitch)</option>
-        <option value="tremolo">Tremolo (Amplitude)</option>
-        <option value="filter">Filter Cutoff Sweep</option>
-        <option value="moddepth">Modulation Depth</option>
-      </select>
-      <div class="wave-strip" data-lfo="1" data-hk="wave-lfo">
-        <button class="wt on" data-v="sine"    ><svg viewBox="0 0 40 20"><path d="M0,10 C5,0 15,0 20,10 C25,20 35,20 40,10"/></svg></button>
-        <button class="wt"    data-v="triangle"><svg viewBox="0 0 40 20"><path d="M0,10 L10,2 L30,18 L40,10"/></svg></button>
-        <button class="wt"    data-v="square"  ><svg viewBox="0 0 40 20"><path d="M0,18 L0,2 L20,2 L20,18 L40,18"/></svg></button>
-        <button class="wt"    data-v="sawtooth"><svg viewBox="0 0 40 20"><path d="M0,18 L20,2 L20,18 L40,2"/></svg></button>
-      </div>
-      <div class="kg">
-        <div class="kw"><span class="klbl">Rate</span><div class="knob" id="kn-lfo-rate" data-c="l" data-hk="lfo-rate" data-min="0" data-max="100" data-v="22"></div><span class="kval" id="vl-lfo-rate">0.5</span></div>
-        <div class="kw"><span class="klbl">Amount</span><div class="knob" id="kn-lfo-amt" data-c="l" data-hk="lfo-amt" data-min="0" data-max="100" data-v="30"></div><span class="kval" id="vl-lfo-amt">30%</span></div>
-      </div>
-      <!-- LFO waveform visualiser -->
-      <canvas class="mod-canvas" id="cv-lfo" height="44"></canvas>
-    </div>
-
-    <!-- FILTER -->
-    <div class="mod" data-c="f">
-      <div class="mod-hd">
-        <span class="mod-id">Filter</span>
-        <span class="mod-sub">Biquad</span>
-      </div>
-      <select id="sel-flt" data-hk="flt-type">
-        <option value="bypass">Bypass — Off</option>
-        <option value="lowpass">Low-Pass — Cuts Highs</option>
-        <option value="highpass">High-Pass — Cuts Lows</option>
-        <option value="bandpass">Band-Pass — Narrow Peak</option>
-        <option value="notch">Notch — Band Reject</option>
-        <option value="peaking">Peaking EQ — Bell Boost</option>
-      </select>
-      <div class="kg">
-        <div class="kw"><span class="klbl">Cutoff</span><div class="knob" id="kn-flt-f" data-c="f" data-hk="flt-f" data-min="0" data-max="100" data-v="60"></div><span class="kval" id="vl-flt-f">1.6k</span></div>
-        <div class="kw"><span class="klbl">Resonance</span><div class="knob" id="kn-flt-q" data-c="f" data-hk="flt-q" data-min="0.1" data-max="20" data-v="1"></div><span class="kval" id="vl-flt-q">1.0</span></div>
-        <div class="kw"><span class="klbl">Gain dB</span><div class="knob" id="kn-flt-g" data-c="f" data-hk="flt-g" data-min="-24" data-max="24" data-v="6"></div><span class="kval" id="vl-flt-g">+6</span></div>
-      </div>
-      <!-- Filter frequency response curve -->
-      <canvas class="mod-canvas" id="cv-flt" height="72"></canvas>
-    </div>
-
-    <!-- GLOBAL -->
-    <div class="mod" data-c="g">
-      <div class="mod-hd">
-        <span class="mod-id">Global</span>
-        <span class="mod-sub">Output FX</span>
-      </div>
-      <div class="kg">
-        <div class="kw"><span class="klbl">Drive</span><div class="knob" id="kn-drive" data-c="g" data-hk="drive" data-min="0" data-max="100" data-v="0"></div><span class="kval" id="vl-drive">0%</span></div>
-        <div class="kw"><span class="klbl">Master</span><div class="knob" id="kn-master" data-c="g" data-hk="master" data-min="0" data-max="100" data-v="50"></div><span class="kval" id="vl-master">50%</span></div>
-      </div>
-      <div class="fx-note">
-        <strong>Drive</strong> — tanh saturation. Warmth at low %, grit at high.<br>
-        <strong>Comp</strong> — always on. 3:1, −12dB. Keeps bass/treble balanced.<br>
-        <strong>Master</strong> — logarithmic taper.
-      </div>
-    </div>
-
-  </div><!-- .dash -->
-
-  <!-- HELP PANEL -->
-  <div id="help-panel">
-    <span id="help-title">Hover any control</span>
-    <span id="help-text" style="font-family:'Share Tech Mono',monospace;font-size:.66rem;color:var(--silk);line-height:1.65">Move your mouse over any knob, toggle, or selector above for a detailed explanation of what it does.</span>
-  </div>
-
-  <div class="hints">
-    <span class="hint"><kbd>Space</kbd> Power</span>
-    <span class="hint"><kbd>↑</kbd><kbd>↓</kbd> Root ±semitone</span>
-    <span class="hint"><kbd>Shift</kbd>+<kbd>↑↓</kbd> ±octave</span>
-    <span class="hint"><kbd>1</kbd>–<kbd>6</kbd> Presets</span>
-    <span class="hint">Scroll wheel on knobs</span>
-    <span class="hint">Double-click value to type</span>
-  </div>
-</div><!-- .rack -->
-
-<script>
-/* ═══════════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════════ */
-const S = {
-  rootMidi: 69,
-  playing: false,
-  A:   { type:'sine',  oct:0,  semi:0,  freq:440 },
-  B:   { type:'sine',  oct:-3, semi:0,  amt:50, route:'none', freq:55 },
-  lfo: { type:'sine',  ratePct:22, amt:30, target:'off' },
-  flt: { type:'bypass',freqPct:60, q:1,   gain:6 },
-  fx:  { drive:0, master:0.5 }
-};
-
-/* ─── Note helpers ──────────────────────────── */
-const NNAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const m2f = n => 440*Math.pow(2,(n-69)/12);
-const m2n = n => NNAMES[((n%12)+12)%12]+(Math.floor(n/12)-1);
-const f2n = f => (!f||f<14||f>22000)?'--':m2n(Math.round(69+12*Math.log2(f/440)));
-const calcF  = (o,s) => m2f(S.rootMidi)*Math.pow(2,o+s/12);
-const pct2lfo  = p => 0.04*Math.pow(500,p/100);
-const pct2flt  = p => 25*Math.pow(800,p/100);
-const fmtHz  = f => f>=1000?(f/1000).toFixed(f<10000?1:0)+'k':Math.round(f)+'';
-const fmtLfo = r => r<1?r.toFixed(2)+'Hz':r.toFixed(1)+'Hz';
-
-function refreshRoot() {
-  document.getElementById('root-name').textContent = m2n(S.rootMidi);
-  document.getElementById('root-hz').textContent   = m2f(S.rootMidi).toFixed(1)+' Hz';
-}
-function shiftRoot(d) {
-  S.rootMidi = Math.max(24,Math.min(96,S.rootMidi+d));
-  refreshRoot(); updateAudio();
-}
-document.getElementById('root-up').onclick = ()=>shiftRoot(1);
-document.getElementById('root-dn').onclick = ()=>shiftRoot(-1);
-refreshRoot();
-
-/* ─── Presets ───────────────────────────────── */
-const MOD_INFO = {
-  none:'Both oscillators play independently. Mod Amount sets Osc B level in the mix. Neither signal affects the other\'s properties.',
-  am:'<strong>AM:</strong> Osc B controls the volume of Osc A. At sub-audio rates (&lt;20 Hz) → tremolo effect. At audio rates → new sideband frequencies appear at A±B Hz.',
-  fm:'<strong>FM:</strong> Osc B rapidly modulates Osc A\'s pitch. β index (shown above) controls harmonic brightness. Integer C:M ratios → harmonic; fractional → metallic/bell tones.',
-  pm:'<strong>PM:</strong> Osc B shifts the phase of Osc A. Similar to FM but weights harmonics toward the attack transient — brighter, punchier character.',
-  ring:'<strong>Ring Mod:</strong> Multiplies both signals. Original frequencies cancel; only sum (A+B) and difference (|A−B|) remain. Classic Dalek/robot character.'
-};
-
-const PRESETS = [
-  {r:69,A:{t:'sine',o:0,s:0},  B:{t:'sine',o:-3,s:0,a:0,  rt:'none'}, L:{t:'sine',rp:22,a:0,  tg:'off'},    F:{t:'bypass',fp:60,q:1, g:6},  X:{d:0,  m:50}},
-  {r:69,A:{t:'sine',o:0,s:0},  B:{t:'sine',o:-6,s:0,a:80, rt:'am'},   L:{t:'sine',rp:18,a:50, tg:'tremolo'},F:{t:'bypass',fp:60,q:1, g:6},  X:{d:0,  m:50}},
-  {r:69,A:{t:'sine',o:-1,s:0}, B:{t:'sine',o:0, s:0,a:65, rt:'fm'},   L:{t:'sine',rp:22,a:0,  tg:'off'},    F:{t:'bypass',fp:80,q:1, g:6},  X:{d:0,  m:50}},
-  {r:69,A:{t:'sine',o:-1,s:0}, B:{t:'sine',o:-3,s:0,a:100,rt:'ring'}, L:{t:'sine',rp:22,a:0,  tg:'off'},    F:{t:'bypass',fp:60,q:1, g:6},  X:{d:0,  m:50}},
-  {r:57,A:{t:'sine',o:0, s:0}, B:{t:'sine',o:1, s:0,a:55, rt:'fm'},   L:{t:'sine',rp:22,a:0,  tg:'off'},    F:{t:'bypass',fp:60,q:1, g:6},  X:{d:22, m:50}},
-  {r:69,A:{t:'sawtooth',o:0,s:0},B:{t:'sine',o:0,s:0,a:0,rt:'none'},  L:{t:'sine',rp:30,a:75, tg:'filter'}, F:{t:'lowpass',fp:55,q:9,g:6}, X:{d:8,  m:50}},
-];
-
-function applyPreset(i) {
-  const p=PRESETS[i]; if(!p) return;
-  S.rootMidi=p.r;
-  S.A.type=p.A.t;S.A.oct=p.A.o;S.A.semi=p.A.s;
-  S.B.type=p.B.t;S.B.oct=p.B.o;S.B.semi=p.B.s;S.B.amt=p.B.a;S.B.route=p.B.rt;
-  S.lfo.type=p.L.t;S.lfo.ratePct=p.L.rp;S.lfo.amt=p.L.a;S.lfo.target=p.L.tg;
-  S.flt.type=p.F.t;S.flt.freqPct=p.F.fp;S.flt.q=p.F.q;S.flt.gain=p.F.g;
-  S.fx.drive=p.X.d;S.fx.master=p.X.m/100;
-  refreshRoot();
-  const km={'kn-a-oct':p.A.o,'kn-a-semi':p.A.s,'kn-b-oct':p.B.o,'kn-b-semi':p.B.s,'kn-mod-amt':p.B.a,
-    'kn-lfo-rate':p.L.rp,'kn-lfo-amt':p.L.a,'kn-flt-f':p.F.fp,'kn-flt-q':p.F.q,'kn-flt-g':p.F.g,'kn-drive':p.X.d,'kn-master':p.X.m};
-  Object.entries(km).forEach(([id,v])=>{const k=document.getElementById(id);if(k){k.dataset.v=v;updateKnobUI(id,v);}});
-  ['a','b'].forEach(o=>{const t=o==='a'?p.A.t:p.B.t;document.querySelectorAll(`.wave-strip[data-osc="${o}"] .wt`).forEach(b=>b.classList.toggle('on',b.dataset.v===t));});
-  document.querySelectorAll('.wave-strip[data-lfo] .wt').forEach(b=>b.classList.toggle('on',b.dataset.v===p.L.t));
-  document.getElementById('sel-route').value=p.B.rt;
-  document.getElementById('sel-lfo-tgt').value=p.L.tg;
-  document.getElementById('sel-flt').value=p.F.t;
-  document.querySelectorAll('.btn-p').forEach(b=>b.classList.remove('active'));
-  document.querySelector(`.btn-p[data-p="${i}"]`)?.classList.add('active');
-  updateAudio();
-}
-document.querySelectorAll('.btn-p').forEach(b=>{
-  b.onclick=()=>{if(!S.playing){initAudio();setPower(true);}applyPreset(+b.dataset.p);};
-});
-
-/* ═══════════════════════════════════════════════
-   AUDIO ENGINE
-═══════════════════════════════════════════════ */
-let ctx,oscA,oscB,lfoOsc,cGain,mGain,rGain,lfoGain,tremoloGain,tremoloConst;
-let dcBlock,waveshaper,biquad,compressor,makeupGain,masterGain;
-let anlOut,anlA,anlB,anlSpec;
-let filterMagArr=null, filterFreqArr=null;
-let audioStart=0;
-
-function makeDistCurve(pct) {
-  const n=512,c=new Float32Array(n);
-  if(pct<1){for(let i=0;i<n;i++)c[i]=(i*2/n)-1;return c;}
-  const k=(pct/100)*8, norm=Math.tanh(k)||1;
-  for(let i=0;i<n;i++){const x=(i*2)/n-1;c[i]=Math.tanh(k*x)/norm;}
-  return c;
-}
-
-function initAudio() {
-  if(ctx)return ctx.resume();
-  ctx=new(window.AudioContext||window.webkitAudioContext)();
-  audioStart=performance.now();
-  oscA=ctx.createOscillator();oscB=ctx.createOscillator();lfoOsc=ctx.createOscillator();
-  cGain=ctx.createGain();mGain=ctx.createGain();rGain=ctx.createGain();lfoGain=ctx.createGain();
-  tremoloGain=ctx.createGain();
-  tremoloConst=ctx.createConstantSource();tremoloConst.offset.value=1;tremoloConst.start();
-  tremoloConst.connect(tremoloGain.gain);
-  dcBlock=ctx.createBiquadFilter();dcBlock.type='highpass';dcBlock.frequency.value=18;dcBlock.Q.value=0.7;
-  waveshaper=ctx.createWaveShaper();waveshaper.oversample='4x';
-  biquad=ctx.createBiquadFilter();
-  compressor=ctx.createDynamicsCompressor();
-  compressor.threshold.value=-12;compressor.knee.value=10;
-  compressor.ratio.value=3;compressor.attack.value=0.004;compressor.release.value=0.18;
-  makeupGain=ctx.createGain();makeupGain.gain.value=1.6;
-  masterGain=ctx.createGain();
-  anlOut=ctx.createAnalyser();anlA=ctx.createAnalyser();anlB=ctx.createAnalyser();
-  anlSpec=ctx.createAnalyser();
-  [anlOut,anlA,anlB].forEach(a=>{a.fftSize=2048;a.smoothingTimeConstant=0.06;});
-  anlSpec.fftSize=2048;anlSpec.smoothingTimeConstant=0.78;
-  lfoOsc.start();oscA.start();oscB.start();
-  updateAudio();
-}
-
-function updateAudio() {
-  if(!ctx)return;
-  [oscA,oscB,cGain,mGain,rGain,lfoOsc,lfoGain,tremoloGain,dcBlock,waveshaper,biquad,compressor,makeupGain,masterGain].forEach(n=>{try{n.disconnect();}catch(e){}});
-  tremoloConst.connect(tremoloGain.gain);
-
-  S.A.freq=calcF(S.A.oct,S.A.semi);
-  S.B.freq=calcF(S.B.oct,S.B.semi);
-  const lfoRate=pct2lfo(S.lfo.ratePct);
-  oscA.type=S.A.type;oscA.frequency.setTargetAtTime(S.A.freq,ctx.currentTime,0.02);
-  oscB.type=S.B.type;oscB.frequency.setTargetAtTime(S.B.freq,ctx.currentTime,0.02);
-  lfoOsc.type=S.lfo.type;lfoOsc.frequency.setTargetAtTime(lfoRate,ctx.currentTime,0.05);
-
-  lfoOsc.connect(lfoGain);
-  const la=S.lfo.amt/100;
-  switch(S.lfo.target){
-    case'vibrato': lfoGain.gain.value=la*S.A.freq*0.15;lfoGain.connect(oscA.frequency);break;
-    case'tremolo': lfoGain.gain.value=la*0.5;lfoGain.connect(tremoloGain.gain);break;
-    case'filter':  lfoGain.gain.value=la*pct2flt(S.flt.freqPct)*0.65;lfoGain.connect(biquad.frequency);break;
-    case'moddepth':lfoGain.gain.value=la*(S.B.amt/100)*0.6;lfoGain.connect(mGain.gain);break;
-    default:lfoGain.gain.value=0;
-  }
-
-  oscA.connect(anlA);oscB.connect(anlB);
-  const amt=S.B.amt/100;
-  switch(S.B.route){
-    case'none':oscA.connect(tremoloGain);mGain.gain.value=amt;oscB.connect(mGain);mGain.connect(tremoloGain);break;
-    case'am':  cGain.gain.value=1;oscA.connect(cGain);cGain.connect(tremoloGain);mGain.gain.value=amt*0.5;oscB.connect(mGain);mGain.connect(cGain.gain);break;
-    case'fm':  oscA.connect(tremoloGain);mGain.gain.value=amt*S.A.freq*0.5;oscB.connect(mGain);mGain.connect(oscA.frequency);break;
-    case'pm':  oscA.connect(tremoloGain);mGain.gain.value=amt*1200;oscB.connect(mGain);mGain.connect(oscA.detune);break;
-    case'ring':rGain.gain.value=0;oscA.connect(rGain);rGain.connect(tremoloGain);mGain.gain.value=amt;oscB.connect(mGain);mGain.connect(rGain.gain);break;
-  }
-
-  tremoloGain.connect(dcBlock);dcBlock.connect(waveshaper);
-  waveshaper.curve=makeDistCurve(S.fx.drive);
-
-  if(S.flt.type==='bypass'){
-    waveshaper.connect(compressor);
-  } else {
-    biquad.type=S.flt.type;
-    biquad.frequency.setTargetAtTime(pct2flt(S.flt.freqPct),ctx.currentTime,0.02);
-    biquad.Q.value=S.flt.q;biquad.gain.value=S.flt.gain;
-    waveshaper.connect(biquad);biquad.connect(compressor);
-  }
-
-  compressor.connect(makeupGain);makeupGain.connect(masterGain);
-  masterGain.gain.setTargetAtTime(Math.pow(S.fx.master,2),ctx.currentTime,0.02);
-  masterGain.connect(anlOut);masterGain.connect(anlSpec);anlOut.connect(ctx.destination);
-
-  // Compute filter response
-  updateFilterResponse();
-
-  // UI readouts
-  document.getElementById('note-a').textContent=f2n(S.A.freq);
-  document.getElementById('note-b').textContent=f2n(S.B.freq);
-  document.getElementById('lfo-rate-out').textContent=fmtLfo(lfoRate);
-  document.getElementById('ratio').textContent='C:M '+(S.B.freq>0?(S.B.freq/S.A.freq).toFixed(3):'—');
-  let inf='';
-  if(S.B.route==='fm'&&S.B.freq>0)inf='β='+((amt*S.A.freq*0.5)/S.B.freq).toFixed(2);
-  else if(S.B.route==='am')inf='depth '+(amt*50).toFixed(0)+'%';
-  else if(S.B.route==='ring')inf=(S.A.freq+S.B.freq).toFixed(0)+'Hz | '+(Math.abs(S.A.freq-S.B.freq)).toFixed(0)+'Hz';
-  if(S.lfo.target!=='off')inf+=(inf?' · ':'')+fmtLfo(lfoRate)+'→'+S.lfo.target;
-  document.getElementById('vis-inf').textContent=inf;
-}
-
-function updateFilterResponse() {
-  if(!ctx||!biquad||S.flt.type==='bypass'){filterMagArr=null;return;}
-  const n=256;
-  filterFreqArr=new Float32Array(n);filterMagArr=new Float32Array(n);
-  const phase=new Float32Array(n);
-  const sr=ctx.sampleRate;
-  for(let i=0;i<n;i++) filterFreqArr[i]=20*Math.pow(sr/40,i/(n-1));
-  biquad.getFrequencyResponse(filterFreqArr,filterMagArr,phase);
-}
-
-/* ═══════════════════════════════════════════════
-   CHART RECORDER — TRUE SCROLLING WAVEFORM
-   Uses getImageData/putImageData to preserve
-   history. For each new pixel column, we compute
-   the MIN and MAX of a window of audio samples,
-   drawing a vertical bar. This produces the
-   classic DAW "waveform view" that scrolls right.
-═══════════════════════════════════════════════ */
-const cvScroll=document.getElementById('cv-scroll');
-const cx1=cvScroll.getContext('2d');
-let scrollBuf=null,scrollCtx=null,sBW=0,sBH=0;
-let scrollDW=0,scrollDH=0;
-const SCROLL_STEP=2;      // px per frame
-const SPC=90;             // audio samples per pixel column
-
-function ensureScrollBuf(w,h){
-  if(sBW===w&&sBH===h&&scrollBuf)return;
-  scrollBuf=document.createElement('canvas');scrollBuf.width=w;scrollBuf.height=h;
-  scrollCtx=scrollBuf.getContext('2d');
-  scrollCtx.fillStyle='#000';scrollCtx.fillRect(0,0,w,h);
-  sBW=w;sBH=h;
-}
-
-function renderScroll(w,h,bufOut,bufA){
-  ensureScrollBuf(w,h);
-
-  // Auto-scale: find peak in entire buffer
-  let peak=0.015;
-  for(let i=0;i<bufOut.length;i++) if(Math.abs(bufOut[i])>peak) peak=Math.abs(bufOut[i]);
-  const SC=h*0.43/peak;
-
-  // Shift existing content left by SCROLL_STEP
-  const img=scrollCtx.getImageData(SCROLL_STEP,0,w-SCROLL_STEP,h);
-  scrollCtx.putImageData(img,0,0);
-
-  // Paint new right strip black
-  const x0=w-SCROLL_STEP;
-  scrollCtx.fillStyle='#000';scrollCtx.fillRect(x0,0,SCROLL_STEP+1,h);
-
-  // Grid lines in new strip
-  [[h*.25,'rgba(255,255,255,.022)'],[h*.5,'rgba(255,255,255,.055)'],[h*.75,'rgba(255,255,255,.022)']].forEach(([y,c])=>{
-    scrollCtx.strokeStyle=c;scrollCtx.lineWidth=1;scrollCtx.setLineDash([]);
-    scrollCtx.beginPath();scrollCtx.moveTo(x0,y);scrollCtx.lineTo(w,y);scrollCtx.stroke();
-  });
-
-  // Render each new pixel column using min/max
-  for(let px=0;px<SCROLL_STEP;px++){
-    const colX=x0+px;
-    // Map column to sample range: newer columns → later samples
-    // px=SCROLL_STEP-1 is the most recent data
-    const endSample=bufOut.length-(SCROLL_STEP-1-px)*SPC;
-    const startSample=endSample-SPC;
-
-    let minO=1,maxO=-1,minA=1,maxA=-1;
-    for(let s=Math.max(0,startSample);s<Math.min(bufOut.length,endSample);s++){
-      if(bufOut[s]<minO)minO=bufOut[s];
-      if(bufOut[s]>maxO)maxO=bufOut[s];
-      if(bufA[s]<minA)minA=bufA[s];
-      if(bufA[s]>maxA)maxA=bufA[s];
-    }
-
-    // Osc A ghost (dim blue bar)
-    const yaT=h/2-maxA*SC, yaB=h/2-minA*SC;
-    scrollCtx.fillStyle='rgba(58,107,255,.18)';
-    scrollCtx.fillRect(colX,Math.min(yaT,yaB),1,Math.max(1,Math.abs(yaB-yaT)));
-
-    // Output (teal glow)
-    const yoT=h/2-maxO*SC, yoB=h/2-minO*SC;
-    const barH=Math.max(1,Math.abs(yoB-yoT));
-    const barY=Math.min(yoT,yoB);
-    // Soft glow halo
-    scrollCtx.fillStyle='rgba(0,208,154,.15)';
-    scrollCtx.fillRect(colX-1,barY-1,3,barH+2);
-    // Bright core
-    scrollCtx.fillStyle='rgba(0,208,154,.9)';
-    scrollCtx.fillRect(colX,barY,1,barH);
-  }
-
-  // Playhead
-  scrollCtx.strokeStyle='rgba(255,255,255,.09)';scrollCtx.lineWidth=1;
-  scrollCtx.beginPath();scrollCtx.moveTo(w-1,0);scrollCtx.lineTo(w-1,h);scrollCtx.stroke();
-
-  // Copy to display
-  cx1.clearRect(0,0,w,h);cx1.drawImage(scrollBuf,0,0);
-
-  // Legend
-  cx1.font='10px "Share Tech Mono",monospace';cx1.textAlign='left';
-  [{c:'rgba(58,107,255,.45)',lbl:'OSC A'},{c:'rgba(0,208,154,.85)',lbl:'OUTPUT'}].forEach(({c,lbl},i)=>{
-    const lx=8+i*72;
-    cx1.strokeStyle=c;cx1.lineWidth=1.5;cx1.setLineDash([]);
-    cx1.beginPath();cx1.moveTo(lx,12);cx1.lineTo(lx+12,12);cx1.stroke();
-    cx1.fillStyle=c;cx1.fillText(lbl,lx+16,17);
-  });
-}
-
-/* ─── Scope (triggered) ─────────────────────── */
-const cvScope=document.getElementById('cv-scope');
-const cx2=cvScope.getContext('2d');
-
-function zeroCross(buf,from=0){
-  for(let i=from+1;i<buf.length/2;i++) if(buf[i-1]<0&&buf[i]>=0)return i;
-  return from;
-}
-function gridLines(c,w,h,a=0.04){
-  c.lineWidth=1;c.setLineDash([]);
-  c.strokeStyle=`rgba(255,255,255,${a*1.8})`;c.beginPath();c.moveTo(0,h/2);c.lineTo(w,h/2);c.stroke();
-  c.strokeStyle=`rgba(255,255,255,${a})`;
-  [h*.25,h*.75].forEach(y=>{c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke();});
-  [w*.25,w*.5,w*.75].forEach(x=>{c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke();});
-}
-function waveTrace(c,buf,off,win,w,h,sc,col,lw,glow=''){
-  const s=w/win;c.strokeStyle=col;c.lineWidth=lw;c.setLineDash([]);
-  if(glow){c.shadowBlur=12;c.shadowColor=glow;}
-  c.beginPath();
-  for(let i=0;i<win;i++){const x=i*s,y=h/2+(buf[off+i]||0)*h*sc;i===0?c.moveTo(x,y):c.lineTo(x,y);}
-  c.stroke();c.shadowBlur=0;
-}
-function fillBetween(c,bT,bB,off,win,w,h,sc,col){
-  const s=w/win;c.beginPath();
-  for(let i=0;i<win;i++){const x=i*s,y=h/2+(bT[off+i]||0)*h*sc;i===0?c.moveTo(x,y):c.lineTo(x,y);}
-  for(let i=win-1;i>=0;i--)c.lineTo(i*s,h/2+(bB[off+i]||0)*h*sc);
-  c.closePath();c.fillStyle=col;c.fill();
-}
-
-function drawScope(w,h,bOut,bA,bB,sc){
-  cx2.clearRect(0,0,w,h);gridLines(cx2,w,h,0.03);
-  const win=bOut.length/4,tA=zeroCross(bA);
-  fillBetween(cx2,bA,bOut,tA,win,w,h,sc,'rgba(0,208,154,.05)');
-  fillBetween(cx2,bA,new Float32Array(bA.length),tA,win,w,h,sc,'rgba(58,107,255,.035)');
-  // B dashed
-  cx2.setLineDash([5,4]);cx2.strokeStyle='rgba(158,53,255,.35)';cx2.lineWidth=1.2;
-  const sb=w/win;cx2.beginPath();
-  for(let i=0;i<win;i++){const x=i*sb,y=h/2+(bB[tA+i]||0)*h*sc;i===0?cx2.moveTo(x,y):cx2.lineTo(x,y);}cx2.stroke();cx2.setLineDash([]);
-  waveTrace(cx2,bA,tA,win,w,h,sc,'rgba(58,107,255,.9)',1.8,'rgba(58,107,255,.4)');
-  waveTrace(cx2,bOut,tA,win,w,h,sc,'rgba(0,208,154,.95)',2,'rgba(0,208,154,.4)');
-  cx2.font='9px "Share Tech Mono",monospace';cx2.textAlign='right';
-  const yA=h/2+(bA[tA+win-1]||0)*h*sc;
-  const yO=h/2+(bOut[tA+win-1]||0)*h*sc;
-  const yB=h/2+(bB[tA+win-1]||0)*h*sc;
-  cx2.fillStyle='rgba(58,107,255,.7)';  cx2.fillText('A',w-4,Math.max(10,Math.min(h-4,yA)));
-  cx2.fillStyle='rgba(158,53,255,.6)';  cx2.fillText('B',w-4,Math.max(10,Math.min(h-4,yB+10)));
-  cx2.fillStyle='rgba(0,208,154,.85)';  cx2.fillText('∑',w-4,Math.max(10,Math.min(h-4,yO-10)));
-  cx2.textAlign='left';
-}
-
-/* ─── Lissajous / Audio Imager ─────────────── */
-const cvLissa=document.getElementById('cv-lissa');
-const cxL=cvLissa.getContext('2d');
-let lissaBuf=null,lissaCtx=null,lBW=0,lBH=0;
-
-function drawLissa(w,h,bufA,bufOut,sc){
-  if(lBW!==w||lBH!==h){
-    lissaBuf=document.createElement('canvas');lissaBuf.width=w;lissaBuf.height=h;
-    lissaCtx=lissaBuf.getContext('2d');
-    lissaCtx.fillStyle='#000';lissaCtx.fillRect(0,0,w,h);
-    lBW=w;lBH=h;
-  }
-  // Decay
-  lissaCtx.fillStyle='rgba(0,0,0,.12)';lissaCtx.fillRect(0,0,w,h);
-  // Draw
-  const cx=w/2,cy=h/2,r=Math.min(w,h)*0.43;
-  const step=Math.max(1,Math.floor(bufA.length/300));
-  for(let i=0;i<bufA.length;i+=step){
-    const x=cx+bufA[i]*sc*r;
-    const y=cy-bufOut[i]*sc*r;
-    const t=i/bufA.length;
-    lissaCtx.fillStyle=`rgba(0,208,154,${.08+t*.6})`;
-    lissaCtx.fillRect(x-.5,y-.5,1.5,1.5);
-  }
-  // Center cross
-  lissaCtx.strokeStyle='rgba(255,255,255,.06)';lissaCtx.lineWidth=1;lissaCtx.setLineDash([]);
-  lissaCtx.beginPath();lissaCtx.moveTo(cx,0);lissaCtx.lineTo(cx,h);lissaCtx.stroke();
-  lissaCtx.beginPath();lissaCtx.moveTo(0,cy);lissaCtx.lineTo(w,cy);lissaCtx.stroke();
-  cxL.clearRect(0,0,w,h);cxL.drawImage(lissaBuf,0,0);
-  // Labels
-  cxL.font='9px "Share Tech Mono",monospace';cxL.fillStyle='rgba(0,208,154,.3)';
-  cxL.fillText('A',cx+r*.9,cy+12);cxL.fillText('∑',cx-12,cy-r*.9+4);
-  cxL.textAlign='center';cxL.fillText('Audio Imager',cx,h-4);cxL.textAlign='left';
-}
-
-/* ─── Spectrum Analyser ─────────────────────── */
-const cvSpec=document.getElementById('cv-spec');
-const cx4=cvSpec.getContext('2d');
-
-function drawSpectrum(w,h,freqData){
-  cx4.clearRect(0,0,w,h);
-  // Grid
-  cx4.strokeStyle='rgba(255,255,255,.03)';cx4.lineWidth=1;
-  [h*.5].forEach(y=>{cx4.beginPath();cx4.moveTo(0,y);cx4.lineTo(w,y);cx4.stroke();});
-  // Bars — log-mapped, first 512 bins
-  const bins=Math.min(512,freqData.length);
-  const barW=w/bins;
-  for(let i=0;i<bins;i++){
-    const v=freqData[i]/255;
-    if(v<0.01)continue;
-    const barH=v*h;
-    // Color by frequency band
-    const t=i/bins;
-    let r,g,b;
-    if(t<0.12){r=58;g=107;b=255;}      // sub-bass blue
-    else if(t<0.3){r=100+t*500;g=80;b=200-t*500;}   // bass blue→amber
-    else if(t<0.7){r=200;g=140+t*100;b=20;}          // mids amber
-    else{r=20;g=180+t*75;b=140+t*80;}                // highs teal
-    cx4.fillStyle=`rgba(${r},${g},${b},0.85)`;
-    cx4.fillRect(i*barW,h-barH,Math.max(1,barW-0.5),barH);
-    // Peak cap
-    cx4.fillStyle=`rgba(${r},${g},${b},0.4)`;
-    cx4.fillRect(i*barW,h-barH-1,Math.max(1,barW-0.5),1);
-  }
-  // Freq labels
-  cx4.font='8px "Share Tech Mono",monospace';cx4.fillStyle='rgba(255,255,255,.2)';
-  const sr=ctx?ctx.sampleRate:44100;
-  [[100,'100'],[1000,'1k'],[5000,'5k'],[10000,'10k'],[15000,'15k']].forEach(([f,lbl])=>{
-    const xi=Math.round(f/sr*2*freqData.length);
-    if(xi<bins){const x=xi*barW;cx4.fillText(lbl,x,h-2);}
-  });
-}
-
-/* ─── LFO Mini-Visualiser ───────────────────── */
-const cvLfo=document.getElementById('cv-lfo');
-const cxLfo=cvLfo.getContext('2d');
-
-function drawLfoVis(w,h){
-  cxLfo.clearRect(0,0,w,h);
-  cxLfo.fillStyle='rgba(0,0,0,.0)';cxLfo.fillRect(0,0,w,h);
-  // Center line
-  cxLfo.strokeStyle='rgba(255,255,255,.06)';cxLfo.lineWidth=1;cxLfo.setLineDash([]);
-  cxLfo.beginPath();cxLfo.moveTo(0,h/2);cxLfo.lineTo(w,h/2);cxLfo.stroke();
-  // Draw 2 cycles of LFO waveform
-  cxLfo.strokeStyle='rgba(223,126,0,.75)';cxLfo.lineWidth=1.5;cxLfo.setLineDash([]);
-  cxLfo.shadowBlur=8;cxLfo.shadowColor='rgba(223,126,0,.4)';
-  cxLfo.beginPath();
-  const type=S.lfo.type;
-  for(let i=0;i<=w;i++){
-    const ph=(i/w)*Math.PI*4;
-    let v;
-    if(type==='sine') v=Math.sin(ph);
-    else if(type==='triangle') v=2*Math.abs((ph/Math.PI%2)-1)-1;
-    else if(type==='square') v=Math.sin(ph)>=0?1:-1;
-    else v=((ph/Math.PI%2)-1); // sawtooth
-    const y=h/2-v*h*0.38;
-    i===0?cxLfo.moveTo(i,y):cxLfo.lineTo(i,y);
-  }
-  cxLfo.stroke();cxLfo.shadowBlur=0;
-  // Phase cursor
-  const elapsed=(performance.now()-audioStart)/1000;
-  const rate=pct2lfo(S.lfo.ratePct);
-  const phase=((elapsed*rate)%(2))*0.5; // 0..1 = position in 2-cycle window
-  const phX=phase*w;
-  cxLfo.strokeStyle='rgba(223,126,0,.35)';cxLfo.lineWidth=1;cxLfo.setLineDash([3,3]);
-  cxLfo.beginPath();cxLfo.moveTo(phX,0);cxLfo.lineTo(phX,h);cxLfo.stroke();
-  cxLfo.setLineDash([]);
-  cxLfo.font='8px "Share Tech Mono",monospace';cxLfo.fillStyle='rgba(223,126,0,.4)';
-  const rateLabel=fmtLfo(rate);
-  cxLfo.fillText(rateLabel,3,h-3);
-  cxLfo.textAlign='right';cxLfo.fillText(S.lfo.target==='off'?'inactive':S.lfo.target,w-3,h-3);cxLfo.textAlign='left';
-}
-
-/* ─── Filter Response Curve ─────────────────── */
-const cvFlt=document.getElementById('cv-flt');
-const cxF=cvFlt.getContext('2d');
-
-function drawFilterResp(w,h){
-  cxF.clearRect(0,0,w,h);
-  // Background grid
-  cxF.strokeStyle='rgba(255,255,255,.04)';cxF.lineWidth=1;cxF.setLineDash([]);
-  // 0dB center
-  cxF.strokeStyle='rgba(255,255,255,.08)';cxF.beginPath();cxF.moveTo(0,h/2);cxF.lineTo(w,h/2);cxF.stroke();
-  // dB markers ±12
-  [[h*.25,'rgba(255,255,255,.03)'],[h*.75,'rgba(255,255,255,.03)']].forEach(([y,c])=>{
-    cxF.strokeStyle=c;cxF.beginPath();cxF.moveTo(0,y);cxF.lineTo(w,y);cxF.stroke();
-  });
-  // Freq grid (log)
-  const sr=ctx?ctx.sampleRate:44100;
-  cxF.strokeStyle='rgba(255,255,255,.03)';
-  [100,1000,5000,10000].forEach(f=>{
-    const x=Math.log10(f/20)/Math.log10(sr/40)*w;
-    cxF.beginPath();cxF.moveTo(x,0);cxF.lineTo(x,h);cxF.stroke();
-    cxF.font='7px "Share Tech Mono",monospace';cxF.fillStyle='rgba(255,255,255,.18)';
-    cxF.fillText(f>=1000?f/1000+'k':f,x+2,h-2);
-  });
-  // Axis labels
-  cxF.font='7px "Share Tech Mono",monospace';
-  cxF.fillStyle='rgba(255,255,255,.15)';cxF.fillText('0dB',2,h/2-2);
-  cxF.fillStyle='rgba(255,255,255,.1)';cxF.fillText('+12',2,h*.25-1);cxF.fillText('-12',2,h*.75-1);
-
-  if(S.flt.type==='bypass'||!filterMagArr){
-    // Flat bypass line
-    cxF.strokeStyle='rgba(209,46,70,.3)';cxF.lineWidth=1;cxF.setLineDash([4,4]);
-    cxF.beginPath();cxF.moveTo(0,h/2);cxF.lineTo(w,h/2);cxF.stroke();cxF.setLineDash([]);
-    cxF.font='8px "Share Tech Mono",monospace';cxF.fillStyle='rgba(209,46,70,.35)';cxF.textAlign='center';
-    cxF.fillText('BYPASS',w/2,h/2-4);cxF.textAlign='left';
-    return;
-  }
-
-  // Fill under curve
-  cxF.beginPath();cxF.moveTo(0,h/2);
-  for(let i=0;i<filterMagArr.length;i++){
-    const x=i/filterMagArr.length*w;
-    const db=20*Math.log10(Math.max(0.0001,filterMagArr[i]));
-    const y=h/2-(db/24)*h*0.45;
-    i===0?cxF.lineTo(x,Math.max(1,Math.min(h-1,y))):cxF.lineTo(x,Math.max(1,Math.min(h-1,y)));
-  }
-  cxF.lineTo(w,h/2);cxF.closePath();
-  const grad=cxF.createLinearGradient(0,0,0,h);
-  grad.addColorStop(0,'rgba(209,46,70,.25)');
-  grad.addColorStop(0.5,'rgba(209,46,70,.08)');
-  grad.addColorStop(1,'rgba(209,46,70,.02)');
-  cxF.fillStyle=grad;cxF.fill();
-
-  // Curve line
-  cxF.beginPath();cxF.strokeStyle='rgba(209,46,70,.85)';cxF.lineWidth=1.5;
-  cxF.shadowBlur=8;cxF.shadowColor='rgba(209,46,70,.4)';cxF.setLineDash([]);
-  for(let i=0;i<filterMagArr.length;i++){
-    const x=i/filterMagArr.length*w;
-    const db=20*Math.log10(Math.max(0.0001,filterMagArr[i]));
-    const y=h/2-(db/24)*h*0.45;
-    i===0?cxF.moveTo(x,Math.max(1,Math.min(h-1,y))):cxF.lineTo(x,Math.max(1,Math.min(h-1,y)));
-  }
-  cxF.stroke();cxF.shadowBlur=0;
-
-  // Cutoff marker
-  const cutoff=pct2flt(S.flt.freqPct);
-  const cxPos=Math.log10(cutoff/20)/Math.log10((ctx?ctx.sampleRate:44100)/40)*w;
-  cxF.strokeStyle='rgba(209,46,70,.4)';cxF.lineWidth=1;cxF.setLineDash([3,3]);
-  cxF.beginPath();cxF.moveTo(cxPos,0);cxF.lineTo(cxPos,h);cxF.stroke();cxF.setLineDash([]);
-  cxF.font='8px "Share Tech Mono",monospace';cxF.fillStyle='rgba(209,46,70,.6)';
-  cxF.fillText(fmtHz(cutoff),cxPos+3,10);
-}
-
-/* ═══════════════════════════════════════════════
-   MAIN DRAW LOOP
-═══════════════════════════════════════════════ */
-const freqBins=new Uint8Array(1024); // pre-allocate
-
-function draw(){
-  // Scroll: resize only on actual dim change
-  const sw=cvScroll.offsetWidth,sh=cvScroll.offsetHeight;
-  if(sw!==scrollDW||sh!==scrollDH){cvScroll.width=sw;cvScroll.height=sh;scrollDW=sw;scrollDH=sh;sBW=0;sBH=0;}
-
-  const pw=cvScope.width=cvScope.offsetWidth,ph=cvScope.height=cvScope.offsetHeight;
-  const lw=cvLissa.width=cvLissa.offsetWidth,lh=cvLissa.height=cvLissa.offsetHeight;
-  const spw=cvSpec.width=cvSpec.offsetWidth,sph=cvSpec.height=cvSpec.offsetHeight;
-  const flw=cvFlt.width=cvFlt.offsetWidth,flh=cvFlt.height=cvFlt.offsetHeight;
-  const lfw=cvLfo.width=cvLfo.offsetWidth,lfh=cvLfo.height=cvLfo.offsetHeight;
-
-  if(!S.playing){
-    cx1.clearRect(0,0,sw,sh);gridLines(cx1,sw,sh,0.03);
-    cx2.clearRect(0,0,pw,ph);gridLines(cx2,pw,ph,0.03);
-    cxL.clearRect(0,0,lw,lh);
-    cx4.clearRect(0,0,spw,sph);
-    drawFilterResp(flw,flh);
-    drawLfoVis(lfw,lfh);
-    return requestAnimationFrame(draw);
-  }
-
-  const bOut=new Float32Array(anlOut.fftSize);
-  const bA  =new Float32Array(anlA.fftSize);
-  const bB  =new Float32Array(anlB.fftSize);
-  anlOut.getFloatTimeDomainData(bOut);
-  anlA.getFloatTimeDomainData(bA);
-  anlB.getFloatTimeDomainData(bB);
-
-  // Scope scale
-  let pk=0.015;
-  for(let i=0;i<bOut.length;i++) if(Math.abs(bOut[i])>pk) pk=Math.abs(bOut[i]);
-  const sc=0.42/pk;
-
-  renderScroll(sw,sh,bOut,bA);
-  drawScope(pw,ph,bOut,bA,bB,sc);
-  drawLissa(lw,lh,bA,bOut,sc);
-
-  anlSpec.getByteFrequencyData(freqBins);
-  drawSpectrum(spw,sph,freqBins);
-
-  drawFilterResp(flw,flh);
-  drawLfoVis(lfw,lfh);
-
-  requestAnimationFrame(draw);
-}
-requestAnimationFrame(draw);
-
-/* ═══════════════════════════════════════════════
-   KNOBS
-═══════════════════════════════════════════════ */
-function updateKnobUI(id,rawVal){
-  const k=document.getElementById(id);if(!k)return;
-  const min=+k.dataset.min,max=+k.dataset.max;
-  k.style.transform=`rotate(${((rawVal-min)/(max-min))*270-135}deg)`;
-  const el=document.getElementById(id.replace('kn-','vl-'));if(!el)return;
-  if(id==='kn-lfo-rate'){el.textContent=fmtLfo(pct2lfo(rawVal));return;}
-  if(id==='kn-flt-f')   {el.textContent=fmtHz(pct2flt(rawVal));return;}
-  if(id==='kn-flt-g')   {el.textContent=(rawVal>=0?'+':'')+Math.round(rawVal);return;}
-  if(id==='kn-flt-q')   {el.textContent=(+rawVal).toFixed(1);return;}
-  const isSnap=id.includes('oct')||id.includes('semi');
-  const isPct =id.includes('amt')||id.includes('master')||id.includes('drive');
-  el.textContent=(isSnap?Math.round(rawVal):Math.round(rawVal))+(isPct?'%':'');
-}
-
-let activeK=null,dragY=0;
-function applyDelta(d){
-  if(!activeK)return;
-  const min=+activeK.dataset.min,max=+activeK.dataset.max;
-  const range=max-min,sens=range/(range<=25?100:380);
-  let v=+activeK.dataset.v+d*sens;
-  v=Math.max(min,Math.min(max,v));
-  activeK.dataset.v=v;updateKnobUI(activeK.id,v);syncKnob(activeK.id,v);
-}
-
-document.querySelectorAll('.knob').forEach(k=>{
-  updateKnobUI(k.id,+k.dataset.v);
-  k.onmousedown=e=>{activeK=k;dragY=e.clientY;document.body.style.cursor='ns-resize';e.preventDefault();};
-  k.ontouchstart=e=>{e.preventDefault();activeK=k;dragY=e.touches[0].clientY;};
-  k.addEventListener('wheel',e=>{e.preventDefault();const p=activeK;activeK=k;applyDelta(e.deltaY<0?5:-5);activeK=p;},{passive:false});
-});
-window.onmousemove=e=>{if(!activeK)return;applyDelta(dragY-e.clientY);dragY=e.clientY;};
-window.addEventListener('touchmove',e=>{if(!activeK)return;e.preventDefault();applyDelta(dragY-e.touches[0].clientY);dragY=e.touches[0].clientY;},{passive:false});
-window.onmouseup=()=>{activeK=null;document.body.style.cursor='default';};
-window.ontouchend=()=>{activeK=null;};
-
-function syncKnob(id,v){
-  if(id==='kn-a-oct')   S.A.oct=Math.round(v);
-  if(id==='kn-a-semi')  S.A.semi=Math.round(v);
-  if(id==='kn-b-oct')   S.B.oct=Math.round(v);
-  if(id==='kn-b-semi')  S.B.semi=Math.round(v);
-  if(id==='kn-mod-amt') S.B.amt=v;
-  if(id==='kn-lfo-rate')S.lfo.ratePct=v;
-  if(id==='kn-lfo-amt') S.lfo.amt=v;
-  if(id==='kn-flt-f')   S.flt.freqPct=v;
-  if(id==='kn-flt-q')   S.flt.q=v;
-  if(id==='kn-flt-g')   S.flt.gain=v;
-  if(id==='kn-drive')   S.fx.drive=v;
-  if(id==='kn-master')  S.fx.master=v/100;
-  updateAudio();
-}
-
-document.querySelectorAll('.kval').forEach(el=>{
-  el.ondblclick=()=>{
-    const kId=el.id.replace('vl-','kn-');const k=document.getElementById(kId);if(!k)return;
-    const inp=document.createElement('input');inp.type='number';inp.value=(+k.dataset.v).toFixed(2);
-    Object.assign(inp.style,{width:'58px',background:'#000',color:'var(--amber)',border:'1px solid #3a6bff',padding:'1px 4px',fontSize:'.88rem',textAlign:'center',fontFamily:'"Share Tech Mono",monospace',outline:'none'});
-    el.replaceWith(inp);inp.focus();inp.select();
-    const commit=()=>{let v=parseFloat(inp.value);if(isNaN(v))v=+k.dataset.v;v=Math.max(+k.dataset.min,Math.min(+k.dataset.max,v));k.dataset.v=v;inp.replaceWith(el);updateKnobUI(kId,v);syncKnob(kId,v);};
-    inp.onblur=commit;inp.onkeydown=e=>{if(e.key==='Enter')commit();if(e.key==='Escape')inp.replaceWith(el);};
-  };
-});
-
-/* ─── Wave toggles ──────────────────────────── */
-document.querySelectorAll('.wave-strip').forEach(strip=>{
-  strip.querySelectorAll('.wt').forEach(btn=>{
-    btn.onclick=()=>{
-      strip.querySelector('.on').classList.remove('on');btn.classList.add('on');
-      if(strip.dataset.osc==='a')      S.A.type=btn.dataset.v;
-      else if(strip.dataset.osc==='b') S.B.type=btn.dataset.v;
-      else if(strip.dataset.lfo)       S.lfo.type=btn.dataset.v;
-      updateAudio();
-    };
-  });
-});
-
-/* ─── Selects ───────────────────────────────── */
-document.getElementById('sel-route').onchange=e=>{S.B.route=e.target.value;updateAudio();};
-document.getElementById('sel-lfo-tgt').onchange=e=>{S.lfo.target=e.target.value;updateAudio();};
-document.getElementById('sel-flt').onchange=e=>{S.flt.type=e.target.value;updateAudio();};
-
-/* ─── Power ─────────────────────────────────── */
-function setPower(on){
-  S.playing=on;
-  const b=document.getElementById('pwr');b.textContent=on?'Power Off':'Power On';b.classList.toggle('on',on);
-  document.getElementById('pwr-led').classList.toggle('on',on);
-  if(on)audioStart=performance.now();
-}
-document.getElementById('pwr').onclick=()=>{
-  if(!ctx){initAudio();setPower(true);}
-  else if(S.playing){ctx.suspend();setPower(false);}
-  else{ctx.resume();setPower(true);}
-};
-
-/* ─── Keyboard ──────────────────────────────── */
-document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
-  if(e.key===' '){e.preventDefault();document.getElementById('pwr').click();}
-  if(e.key>='1'&&e.key<='6'){if(!S.playing){initAudio();setPower(true);}applyPreset(+e.key-1);}
-  if(e.key==='ArrowUp'){e.preventDefault();shiftRoot(e.shiftKey?12:1);}
-  if(e.key==='ArrowDown'){e.preventDefault();shiftRoot(e.shiftKey?-12:-1);}
-});
-
-/* ═══════════════════════════════════════════════
-   HOVER HELP SYSTEM
-═══════════════════════════════════════════════ */
-const HELP = {
-  'root':       {c:'',  t:'ROOT NOTE', d:'The fundamental pitch both oscillators tune relative to. Both Osc A and B derive their frequency from here plus their individual octave/semitone offsets. Arrow keys shift it by semitone; Shift+Arrow shifts by a full octave.'},
-  'a-oct':      {c:'a', t:'OSC A — OCTAVE', d:'Shifts Oscillator A up or down in whole octave steps. Each octave doubles or halves the frequency. At 0 with root A4, Osc A plays 440 Hz. At +1: 880 Hz. At −1: 220 Hz.'},
-  'a-semi':     {c:'a', t:'OSC A — SEMITONE', d:'Fine-tunes Oscillator A in semitone steps (1/12 of an octave). Use this to set musical intervals: +7 = perfect fifth, +4 = major third, +3 = minor third, +12 = octave. Watch the note display update in real time.'},
-  'wave-a':     {c:'a', t:'OSC A — WAVEFORM', d:'Selects Osc A\'s waveform shape. Sine: pure single frequency, smooth. Square: rich odd harmonics, buzzy. Sawtooth: all harmonics, bright and brash. Triangle: odd harmonics but softer than square. Audible character changes dramatically with FM/PM modulation.'},
-  'b-oct':      {c:'b', t:'OSC B — OCTAVE', d:'Shifts Osc B\'s pitch in octaves relative to the root. At very low settings (−4 to −6), Osc B enters sub-audio range and behaves like an LFO modulator — creating slow cyclic effects rather than pitched tones.'},
-  'b-semi':     {c:'b', t:'OSC B — SEMITONE', d:'Fine-tunes Osc B in semitone steps. The C:M ratio badge shows B\'s frequency relative to A. Integer ratios (1:1, 1:2, 2:3) create harmonic overtone spectra. Non-integer ratios like 1:1.5 create metallic, bell-like, or dissonant inharmonic textures.'},
-  'wave-b':     {c:'b', t:'OSC B — WAVEFORM', d:'Selects Osc B\'s modulator waveform. In FM mode, the modulator\'s harmonic content shapes the resulting spectrum: a sine modulator creates a simple symmetric sideband pattern, while a sawtooth modulator creates an asymmetric, bright spectrum.'},
-  'mod-amt':    {c:'b', t:'MOD AMOUNT', d:'Controls how strongly Osc B affects Osc A. In AM: sideband depth. In FM: modulation index β — watch the β readout above the scope. In Ring Mod: wet/dry blend. In Parallel: relative output level of Osc B. Full left = Osc B off; full right = maximum effect.'},
-  'route':      {c:'b', t:'MODULATION ROUTING', d:'Sets how Osc B is applied to Osc A. Parallel: additive mix. AM: B controls A\'s amplitude → tremolo at low B rates, sidebands at audio rates. FM: B modulates A\'s frequency → rich harmonic spectra. PM: B modulates A\'s phase → brighter FM-like effect. Ring: multiplies both signals, cancelling originals.'},
-  'lfo-rate':   {c:'l', t:'LFO — RATE', d:'Controls LFO speed from 0.04 Hz (one cycle per 25 seconds) to ~20 Hz (entering audio rate). The mini waveform below shows the current shape and a moving phase cursor. Slow rates create gradual sweeps; rates above 20 Hz create audio effects indistinguishable from FM/AM modulation.'},
-  'lfo-amt':    {c:'l', t:'LFO — AMOUNT', d:'Sets the modulation depth. At 0% the LFO does nothing. At 100% it applies the full range: vibrato = full pitch swing, tremolo = amplitude from 0 to full, filter sweep = full cutoff range, mod depth = full oscillator modulation range.'},
-  'lfo-tgt':    {c:'l', t:'LFO — TARGET', d:'Vibrato: cyclically varies Osc A\'s pitch — classic performance expression effect. Tremolo: rhythmically pumps the volume. Filter Sweep: moves the filter cutoff up and down — the classic \"wah\" or \"envelope\" effect. Mod Depth: rhythmically varies the AM/FM/PM/Ring modulation amount for complex dynamic timbres.'},
-  'wave-lfo':   {c:'l', t:'LFO — WAVEFORM', d:'Sine: smooth, natural-sounding cyclic variation. Triangle: similar to sine but with linear slopes — slightly harder character. Square: abrupt switching between two states — good for tremolos and on/off gating effects. Sawtooth: ramps up then drops — creates a \"ratchet\" or \"retrigger\" character.'},
-  'flt-type':   {c:'f', t:'FILTER TYPE', d:'Low-Pass: attenuates frequencies above the cutoff — the classic synth filter sound, good for making bright sources warm. High-Pass: attenuates below cutoff — thins out the sound, good for bass removal. Band-Pass: passes only a frequency band. Notch: creates a sharp dip. Peaking EQ: boosts or cuts a frequency band by the Gain amount.'},
-  'flt-f':      {c:'f', t:'FILTER — CUTOFF FREQUENCY', d:'The key frequency of the filter\'s effect. In Low-Pass mode: frequencies below this pass through; above are attenuated. Watch the frequency response curve update in real time as you turn this knob. The log scale matches how we perceive pitch — octave intervals are equal distances along the horizontal axis.'},
-  'flt-q':      {c:'f', t:'FILTER — RESONANCE / Q', d:'Sharpness of the filter response at the cutoff. Low Q (0.5–2): gentle, gradual rolloff. Medium Q (2–8): a characteristic resonant peak appears at the cutoff — the synth filter\'s signature sound. High Q (8–20): sharp, potentially self-oscillating peak. In the Peaking EQ mode, Q controls the width of the boost/cut bell.'},
-  'flt-g':      {c:'f', t:'FILTER — GAIN', d:'Controls boost or cut in dB at the center frequency. Primarily affects the Peaking EQ mode, where it sets the bell amplitude (positive = boost, negative = cut). Also affects the notch and other modes slightly. Has no visible effect in Bypass mode.'},
-  'drive':      {c:'g', t:'GLOBAL — DRIVE (SATURATION)', d:'Applies tanh hyperbolic tangent soft-clipping waveshaping. At 1–20%: subtle harmonic warmth — adds mild odd harmonics that \"glue\" the sound. 20–50%: clear saturation, noticeable tone change. 60–100%: heavy distortion. A compressor follows this stage so the overall level stays controlled even at high Drive settings.'},
-  'master':     {c:'g', t:'GLOBAL — MASTER VOLUME', d:'Final output level with logarithmic (perceptual) taper so the control feels natural throughout its range. The built-in compressor (3:1 ratio, −12 dB threshold) runs before this stage, preventing bass-heavy patches from overpowering treble-dominant ones. Set this to your comfort level.'},
-};
-
-// Map data-hk on elements to HELP entries and show on hover
-function initHelp(){
-  const panel=document.getElementById('help-panel');
-  const titleEl=document.getElementById('help-title');
-  const textEl=document.getElementById('help-text');
-  // Attach to knobs, selects, wave-strips, root-ctrl
-  document.querySelectorAll('[data-hk]').forEach(el=>{
-    el.addEventListener('mouseenter',()=>{
-      const key=el.dataset.hk;
-      const info=HELP[key];
-      if(!info)return;
-      titleEl.textContent=info.t;
-      textEl.textContent=info.d;
-      panel.className='';
-      if(info.c) panel.classList.add('hl-'+info.c);
-    });
-  });
-  // Also attach to knobs that have data-hk already (knob elements inside kw have it on the div.knob)
-}
-initHelp();
-</script>
+    <script>
+        /* ═══════════════════════════════════════════════
+           STATE
+        ═══════════════════════════════════════════════ */
+        const S = {
+            rootMidi: 69,
+            playing: false,
+            A: { type: 'sine', oct: 0, semi: 0, freq: 440 },
+            B: { type: 'sine', oct: -3, semi: 0, amt: 50, route: 'none', freq: 55 },
+            lfo: { type: 'sine', ratePct: 22, amt: 30, target: 'off' },
+            flt: { type: 'bypass', freqPct: 60, q: 1, gain: 6 },
+            fx: { drive: 0, master: 0.5 }
+        };
+
+        /* ─── Note helpers ──────────────────────────── */
+        const NNAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const m2f = n => 440 * Math.pow(2, (n - 69) / 12);
+        const m2n = n => NNAMES[((n % 12) + 12) % 12] + (Math.floor(n / 12) - 1);
+        const f2n = f => (!f || f < 14 || f > 22000) ? '--' : m2n(Math.round(69 + 12 * Math.log2(f / 440)));
+        const calcF = (o, s) => m2f(S.rootMidi) * Math.pow(2, o + s / 12);
+        const pct2lfo = p => 0.04 * Math.pow(500, p / 100);
+        const pct2flt = p => 25 * Math.pow(800, p / 100);
+        const fmtHz = f => f >= 1000 ? (f / 1000).toFixed(f < 10000 ? 1 : 0) + 'k' : Math.round(f) + '';
+        const fmtLfo = r => r < 1 ? r.toFixed(2) + 'Hz' : r.toFixed(1) + 'Hz';
+
+        function refreshRoot() {
+            document.getElementById('root-name').textContent = m2n(S.rootMidi);
+            document.getElementById('root-hz').textContent = m2f(S.rootMidi).toFixed(1) + ' Hz';
+        }
+        function shiftRoot(d) {
+            S.rootMidi = Math.max(24, Math.min(96, S.rootMidi + d));
+            refreshRoot(); updateAudio();
+        }
+        document.getElementById('root-up').onclick = () => shiftRoot(1);
+        document.getElementById('root-dn').onclick = () => shiftRoot(-1);
+        refreshRoot();
+
+        /* ─── Presets ───────────────────────────────── */
+        const PRESETS = [
+            { r: 69, A: { t: 'sine', o: 0, s: 0 }, B: { t: 'sine', o: -3, s: 0, a: 0, rt: 'none' }, L: { t: 'sine', rp: 22, a: 0, tg: 'off' }, F: { t: 'bypass', fp: 60, q: 1, g: 6 }, X: { d: 0, m: 50 } },
+            { r: 69, A: { t: 'sine', o: 0, s: 0 }, B: { t: 'sine', o: -6, s: 0, a: 80, rt: 'am' }, L: { t: 'sine', rp: 18, a: 50, tg: 'tremolo' }, F: { t: 'bypass', fp: 60, q: 1, g: 6 }, X: { d: 0, m: 50 } },
+            { r: 69, A: { t: 'sine', o: -1, s: 0 }, B: { t: 'sine', o: 0, s: 0, a: 65, rt: 'fm' }, L: { t: 'sine', rp: 22, a: 0, tg: 'off' }, F: { t: 'bypass', fp: 80, q: 1, g: 6 }, X: { d: 0, m: 50 } },
+            { r: 69, A: { t: 'sine', o: -1, s: 0 }, B: { t: 'sine', o: -3, s: 0, a: 100, rt: 'ring' }, L: { t: 'sine', rp: 22, a: 0, tg: 'off' }, F: { t: 'bypass', fp: 60, q: 1, g: 6 }, X: { d: 0, m: 50 } },
+            { r: 57, A: { t: 'sine', o: 0, s: 0 }, B: { t: 'sine', o: 1, s: 0, a: 55, rt: 'fm' }, L: { t: 'sine', rp: 22, a: 0, tg: 'off' }, F: { t: 'bypass', fp: 60, q: 1, g: 6 }, X: { d: 22, m: 50 } },
+            { r: 69, A: { t: 'sawtooth', o: 0, s: 0 }, B: { t: 'sine', o: 0, s: 0, a: 0, rt: 'none' }, L: { t: 'sine', rp: 30, a: 75, tg: 'filter' }, F: { t: 'lowpass', fp: 55, q: 9, g: 6 }, X: { d: 8, m: 50 } },
+        ];
+
+        function applyPreset(i) {
+            const p = PRESETS[i]; if (!p) return;
+            S.rootMidi = p.r;
+            S.A.type = p.A.t; S.A.oct = p.A.o; S.A.semi = p.A.s;
+            S.B.type = p.B.t; S.B.oct = p.B.o; S.B.semi = p.B.s; S.B.amt = p.B.a; S.B.route = p.B.rt;
+            S.lfo.type = p.L.t; S.lfo.ratePct = p.L.rp; S.lfo.amt = p.L.a; S.lfo.target = p.L.tg;
+            S.flt.type = p.F.t; S.flt.freqPct = p.F.fp; S.flt.q = p.F.q; S.flt.gain = p.F.g;
+            S.fx.drive = p.X.d; S.fx.master = p.X.m / 100;
+            refreshRoot();
+            const km = {
+                'kn-a-oct': p.A.o, 'kn-a-semi': p.A.s, 'kn-b-oct': p.B.o, 'kn-b-semi': p.B.s, 'kn-mod-amt': p.B.a,
+                'kn-lfo-rate': p.L.rp, 'kn-lfo-amt': p.L.a, 'kn-flt-f': p.F.fp, 'kn-flt-q': p.F.q, 'kn-flt-g': p.F.g, 'kn-drive': p.X.d, 'kn-master': p.X.m
+            };
+            Object.entries(km).forEach(([id, v]) => { const k = document.getElementById(id); if (k) { k.dataset.v = v; updateKnobUI(id, v); } });
+            ['a', 'b'].forEach(o => { const t = o === 'a' ? p.A.t : p.B.t; document.querySelectorAll(`.wave-strip[data-osc="${o}"] .wt`).forEach(b => b.classList.toggle('on', b.dataset.v === t)); });
+            document.querySelectorAll('.wave-strip[data-lfo] .wt').forEach(b => b.classList.toggle('on', b.dataset.v === p.L.t));
+            document.getElementById('sel-route').value = p.B.rt;
+            document.getElementById('sel-lfo-tgt').value = p.L.tg;
+            document.getElementById('sel-flt').value = p.F.t;
+            document.querySelectorAll('.btn-p').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.btn-p[data-p="${i}"]`)?.classList.add('active');
+            updateAudio(); // Triggers the safe anti-pop disconnect fade
+        }
+        document.querySelectorAll('.btn-p').forEach(b => {
+            b.onclick = () => { if (!S.playing) { initAudio(); setPower(true); } applyPreset(+b.dataset.p); };
+        });
+
+        /* ═══════════════════════════════════════════════
+           AUDIO ENGINE
+        ═══════════════════════════════════════════════ */
+        let ctx, oscA, oscB, lfoOsc, cGain, mGain, rGain, lfoGain, tremoloGain, tremoloConst;
+        let dcBlock, waveshaper, biquad, compressor, makeupGain, masterGain, antiPopGain;
+        let anlOut, anlA, anlB, anlSpec;
+        let filterMagArr = null, filterFreqArr = null;
+        let audioStart = 0;
+
+        function makeDistCurve(pct) {
+            const n = 512, c = new Float32Array(n);
+            if (pct < 1) { for (let i = 0; i < n; i++)c[i] = (i * 2 / n) - 1; return c; }
+            const k = (pct / 100) * 8, norm = Math.tanh(k) || 1;
+            for (let i = 0; i < n; i++) { const x = (i * 2) / n - 1; c[i] = Math.tanh(k * x) / norm; }
+            return c;
+        }
+
+        function initAudio() {
+            if (ctx) return ctx.resume();
+            ctx = new (window.AudioContext || window.webkitAudioContext)();
+            audioStart = performance.now();
+            oscA = ctx.createOscillator(); oscB = ctx.createOscillator(); lfoOsc = ctx.createOscillator();
+            cGain = ctx.createGain(); mGain = ctx.createGain(); rGain = ctx.createGain(); lfoGain = ctx.createGain();
+            tremoloGain = ctx.createGain();
+            antiPopGain = ctx.createGain();
+
+            tremoloConst = ctx.createConstantSource(); tremoloConst.offset.value = 1; tremoloConst.start();
+            tremoloConst.connect(tremoloGain.gain);
+            dcBlock = ctx.createBiquadFilter(); dcBlock.type = 'highpass'; dcBlock.frequency.value = 18; dcBlock.Q.value = 0.7;
+            waveshaper = ctx.createWaveShaper(); waveshaper.oversample = '4x';
+            biquad = ctx.createBiquadFilter();
+            compressor = ctx.createDynamicsCompressor();
+            compressor.threshold.value = -12; compressor.knee.value = 10;
+            compressor.ratio.value = 3; compressor.attack.value = 0.004; compressor.release.value = 0.18;
+            makeupGain = ctx.createGain(); makeupGain.gain.value = 1.6;
+            masterGain = ctx.createGain();
+
+            anlOut = ctx.createAnalyser(); anlA = ctx.createAnalyser(); anlB = ctx.createAnalyser();
+            anlSpec = ctx.createAnalyser();
+            [anlOut, anlA, anlB].forEach(a => { a.fftSize = 2048; a.smoothingTimeConstant = 0.06; });
+            anlSpec.fftSize = 2048; anlSpec.smoothingTimeConstant = 0.78;
+
+            antiPopGain.connect(anlOut);
+            antiPopGain.connect(anlSpec);
+            antiPopGain.connect(ctx.destination);
+
+            lfoOsc.start(); oscA.start(); oscB.start();
+            rebuildAudioGraph();
+        }
+
+        let popTimer = null;
+
+        // Triggered on discrete topology changes (presets, root, route, flt-type, wave).
+        function updateAudio() {
+            if (!ctx) return;
+            if (!S.playing) { rebuildAudioGraph(); return; }
+
+            // 1. Smooth, quick fade out envelope to hide the graph rebuilding click
+            antiPopGain.gain.cancelScheduledValues(ctx.currentTime);
+            antiPopGain.gain.setTargetAtTime(0, ctx.currentTime, 0.015);
+
+            clearTimeout(popTimer);
+            popTimer = setTimeout(() => {
+                // 2. Safely tear down and rebuild nodes while volume is 0
+                rebuildAudioGraph();
+                // 3. Smooth, quick fade back in envelope
+                antiPopGain.gain.setTargetAtTime(1, ctx.currentTime, 0.015);
+            }, 40);
+        }
+
+        function rebuildAudioGraph() {
+            if (!ctx) return;
+            [oscA, oscB, cGain, mGain, rGain, lfoOsc, lfoGain, tremoloGain, dcBlock, waveshaper, biquad, compressor, makeupGain, masterGain].forEach(n => { try { n.disconnect(); } catch (e) { } });
+
+            tremoloConst.connect(tremoloGain.gain);
+
+            oscA.type = S.A.type; oscB.type = S.B.type; lfoOsc.type = S.lfo.type;
+
+            lfoOsc.connect(lfoGain);
+            switch (S.lfo.target) {
+                case 'vibrato': lfoGain.connect(oscA.frequency); break;
+                case 'tremolo': lfoGain.connect(tremoloGain.gain); break;
+                case 'filter': lfoGain.connect(biquad.frequency); break;
+                case 'moddepth': lfoGain.connect(mGain.gain); break;
+            }
+
+            oscA.connect(anlA); oscB.connect(anlB);
+            switch (S.B.route) {
+                case 'none': oscA.connect(tremoloGain); oscB.connect(mGain); mGain.connect(tremoloGain); break;
+                case 'am': oscA.connect(cGain); cGain.connect(tremoloGain); oscB.connect(mGain); mGain.connect(cGain.gain); break;
+                case 'fm': oscA.connect(tremoloGain); oscB.connect(mGain); mGain.connect(oscA.frequency); break;
+                case 'pm': oscA.connect(tremoloGain); oscB.connect(mGain); mGain.connect(oscA.detune); break;
+                case 'ring': oscA.connect(rGain); rGain.connect(tremoloGain); oscB.connect(mGain); mGain.connect(rGain.gain); break;
+            }
+
+            tremoloGain.connect(dcBlock); dcBlock.connect(waveshaper);
+
+            if (S.flt.type === 'bypass') {
+                waveshaper.connect(compressor);
+            } else {
+                biquad.type = S.flt.type;
+                waveshaper.connect(biquad); biquad.connect(compressor);
+            }
+
+            compressor.connect(makeupGain); makeupGain.connect(masterGain);
+            masterGain.connect(antiPopGain);
+
+            updateParamTargets();
+        }
+
+        // Continuous target updates (used by syncKnobs). Uses native Web Audio smoothing to prevent pops without tearing down graph.
+        function updateParamTargets() {
+            if (!ctx) return;
+            const t = ctx.currentTime;
+
+            S.A.freq = calcF(S.A.oct, S.A.semi);
+            S.B.freq = calcF(S.B.oct, S.B.semi);
+            const lfoRate = pct2lfo(S.lfo.ratePct);
+
+            // setTargetAtTime applies an exponential approach envelope automatically
+            oscA.frequency.setTargetAtTime(S.A.freq, t, 0.02);
+            oscB.frequency.setTargetAtTime(S.B.freq, t, 0.02);
+            lfoOsc.frequency.setTargetAtTime(lfoRate, t, 0.02);
+
+            const la = S.lfo.amt / 100;
+            switch (S.lfo.target) {
+                case 'vibrato': lfoGain.gain.setTargetAtTime(la * S.A.freq * 0.15, t, 0.02); break;
+                case 'tremolo': lfoGain.gain.setTargetAtTime(la * 0.5, t, 0.02); break;
+                case 'filter': lfoGain.gain.setTargetAtTime(la * pct2flt(S.flt.freqPct) * 0.65, t, 0.02); break;
+                case 'moddepth': lfoGain.gain.setTargetAtTime(la * (S.B.amt / 100) * 0.6, t, 0.02); break;
+            }
+
+            const amt = S.B.amt / 100;
+            switch (S.B.route) {
+                case 'none': mGain.gain.setTargetAtTime(amt, t, 0.02); break;
+                case 'am': mGain.gain.setTargetAtTime(amt * 0.5, t, 0.02); break;
+                case 'fm': mGain.gain.setTargetAtTime(amt * S.A.freq * 0.5, t, 0.02); break;
+                case 'pm': mGain.gain.setTargetAtTime(amt * 1200, t, 0.02); break;
+                case 'ring': mGain.gain.setTargetAtTime(amt, t, 0.02); break;
+            }
+
+            waveshaper.curve = makeDistCurve(S.fx.drive);
+
+            if (S.flt.type !== 'bypass') {
+                biquad.frequency.setTargetAtTime(pct2flt(S.flt.freqPct), t, 0.02);
+                biquad.Q.setTargetAtTime(S.flt.q, t, 0.02);
+                biquad.gain.setTargetAtTime(S.flt.gain, t, 0.02);
+            }
+
+            masterGain.gain.setTargetAtTime(Math.pow(S.fx.master, 2), t, 0.02);
+
+            updateFilterResponse();
+            updateUIInfo();
+        }
+
+        function updateUIInfo() {
+            document.getElementById('note-a').textContent = f2n(S.A.freq);
+            document.getElementById('note-b').textContent = f2n(S.B.freq);
+            document.getElementById('lfo-rate-out').textContent = fmtLfo(pct2lfo(S.lfo.ratePct));
+            document.getElementById('ratio').textContent = 'C:M ' + (S.B.freq > 0 ? (S.B.freq / S.A.freq).toFixed(3) : '—');
+
+            const amt = S.B.amt / 100;
+            const lfoRate = pct2lfo(S.lfo.ratePct);
+            let inf = '';
+            if (S.B.route === 'fm' && S.B.freq > 0) inf = 'β=' + ((amt * S.A.freq * 0.5) / S.B.freq).toFixed(2);
+            else if (S.B.route === 'am') inf = 'depth ' + (amt * 50).toFixed(0) + '%';
+            else if (S.B.route === 'ring') inf = (S.A.freq + S.B.freq).toFixed(0) + 'Hz | ' + (Math.abs(S.A.freq - S.B.freq)).toFixed(0) + 'Hz';
+            if (S.lfo.target !== 'off') inf += (inf ? ' · ' : '') + fmtLfo(lfoRate) + '→' + S.lfo.target;
+            document.getElementById('vis-inf').textContent = inf;
+        }
+
+        function updateFilterResponse() {
+            if (!ctx || !biquad || S.flt.type === 'bypass') { filterMagArr = null; return; }
+            const n = 256;
+            filterFreqArr = new Float32Array(n); filterMagArr = new Float32Array(n);
+            const phase = new Float32Array(n);
+            const sr = ctx.sampleRate;
+            for (let i = 0; i < n; i++) filterFreqArr[i] = 20 * Math.pow(sr / 40, i / (n - 1));
+            biquad.getFrequencyResponse(filterFreqArr, filterMagArr, phase);
+        }
+
+        /* ═══════════════════════════════════════════════
+           CHART RECORDER — TRUE SCROLLING WAVEFORM
+        ═══════════════════════════════════════════════ */
+        const cvScroll = document.getElementById('cv-scroll');
+        const cx1 = cvScroll.getContext('2d');
+        let scrollBuf = null, scrollCtx = null, sBW = 0, sBH = 0;
+        let scrollDW = 0, scrollDH = 0;
+        const SCROLL_STEP = 2;      // px per frame
+        const SPC = 90;             // audio samples per pixel column
+
+        function ensureScrollBuf(w, h) {
+            if (sBW === w && sBH === h && scrollBuf) return;
+            scrollBuf = document.createElement('canvas'); scrollBuf.width = w; scrollBuf.height = h;
+            scrollCtx = scrollBuf.getContext('2d');
+            scrollCtx.fillStyle = '#000'; scrollCtx.fillRect(0, 0, w, h);
+            sBW = w; sBH = h;
+        }
+
+        function renderScroll(w, h, bufOut, bufA) {
+            ensureScrollBuf(w, h);
+
+            // Auto-scale: find peak in entire buffer
+            let peak = 0.015;
+            for (let i = 0; i < bufOut.length; i++) if (Math.abs(bufOut[i]) > peak) peak = Math.abs(bufOut[i]);
+            const SC = h * 0.43 / peak;
+
+            // Shift existing content left by SCROLL_STEP
+            const img = scrollCtx.getImageData(SCROLL_STEP, 0, w - SCROLL_STEP, h);
+            scrollCtx.putImageData(img, 0, 0);
+
+            // Paint new right strip black
+            const x0 = w - SCROLL_STEP;
+            scrollCtx.fillStyle = '#000'; scrollCtx.fillRect(x0, 0, SCROLL_STEP + 1, h);
+
+            // Grid lines in new strip
+            [[h * .25, 'rgba(255,255,255,.022)'], [h * .5, 'rgba(255,255,255,.055)'], [h * .75, 'rgba(255,255,255,.022)']].forEach(([y, c]) => {
+                scrollCtx.strokeStyle = c; scrollCtx.lineWidth = 1; scrollCtx.setLineDash([]);
+                scrollCtx.beginPath(); scrollCtx.moveTo(x0, y); scrollCtx.lineTo(w, y); scrollCtx.stroke();
+            });
+
+            // Render each new pixel column using min/max
+            for (let px = 0; px < SCROLL_STEP; px++) {
+                const colX = x0 + px;
+                // Map column to sample range: newer columns → later samples
+                const endSample = bufOut.length - (SCROLL_STEP - 1 - px) * SPC;
+                const startSample = endSample - SPC;
+
+                let minO = 1, maxO = -1, minA = 1, maxA = -1;
+                for (let s = Math.max(0, startSample); s < Math.min(bufOut.length, endSample); s++) {
+                    if (bufOut[s] < minO) minO = bufOut[s];
+                    if (bufOut[s] > maxO) maxO = bufOut[s];
+                    if (bufA[s] < minA) minA = bufA[s];
+                    if (bufA[s] > maxA) maxA = bufA[s];
+                }
+
+                // Osc A ghost (dim blue bar)
+                const yaT = h / 2 - maxA * SC, yaB = h / 2 - minA * SC;
+                scrollCtx.fillStyle = 'rgba(58,107,255,.18)';
+                scrollCtx.fillRect(colX, Math.min(yaT, yaB), 1, Math.max(1, Math.abs(yaB - yaT)));
+
+                // Output (teal glow)
+                const yoT = h / 2 - maxO * SC, yoB = h / 2 - minO * SC;
+                const barH = Math.max(1, Math.abs(yoB - yoT));
+                const barY = Math.min(yoT, yoB);
+                // Soft glow halo
+                scrollCtx.fillStyle = 'rgba(0,208,154,.15)';
+                scrollCtx.fillRect(colX - 1, barY - 1, 3, barH + 2);
+                // Bright core
+                scrollCtx.fillStyle = 'rgba(0,208,154,.9)';
+                scrollCtx.fillRect(colX, barY, 1, barH);
+            }
+
+            // Playhead
+            scrollCtx.strokeStyle = 'rgba(255,255,255,.09)'; scrollCtx.lineWidth = 1;
+            scrollCtx.beginPath(); scrollCtx.moveTo(w - 1, 0); scrollCtx.lineTo(w - 1, h); scrollCtx.stroke();
+
+            // Copy to display
+            cx1.clearRect(0, 0, w, h); cx1.drawImage(scrollBuf, 0, 0);
+
+            // Legend
+            cx1.font = '12px "VT323",monospace'; cx1.textAlign = 'left';
+            [{ c: 'rgba(58,107,255,.45)', lbl: 'OSC A' }, { c: 'rgba(0,208,154,.85)', lbl: 'OUTPUT' }].forEach(({ c, lbl }, i) => {
+                const lx = 8 + i * 72;
+                cx1.strokeStyle = c; cx1.lineWidth = 1.5; cx1.setLineDash([]);
+                cx1.beginPath(); cx1.moveTo(lx, 12); cx1.lineTo(lx + 12, 12); cx1.stroke();
+                cx1.fillStyle = c; cx1.fillText(lbl, lx + 16, 16);
+            });
+        }
+
+        /* ─── Scope (triggered) ─────────────────────── */
+        const cvScope = document.getElementById('cv-scope');
+        const cx2 = cvScope.getContext('2d');
+
+        function zeroCross(buf, from = 0) {
+            for (let i = from + 1; i < buf.length / 2; i++) if (buf[i - 1] < 0 && buf[i] >= 0) return i;
+            return from;
+        }
+        function gridLines(c, w, h, a = 0.04) {
+            c.lineWidth = 1; c.setLineDash([]);
+            c.strokeStyle = `rgba(255,255,255,${a * 1.8})`; c.beginPath(); c.moveTo(0, h / 2); c.lineTo(w, h / 2); c.stroke();
+            c.strokeStyle = `rgba(255,255,255,${a})`;
+            [h * .25, h * .75].forEach(y => { c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); });
+            [w * .25, w * .5, w * .75].forEach(x => { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, h); c.stroke(); });
+        }
+        function waveTrace(c, buf, off, win, w, h, sc, col, lw, glow = '') {
+            const s = w / win; c.strokeStyle = col; c.lineWidth = lw; c.setLineDash([]);
+            if (glow) { c.shadowBlur = 12; c.shadowColor = glow; }
+            c.beginPath();
+            for (let i = 0; i < win; i++) { const x = i * s, y = h / 2 + (buf[off + i] || 0) * h * sc; i === 0 ? c.moveTo(x, y) : c.lineTo(x, y); }
+            c.stroke(); c.shadowBlur = 0;
+        }
+        function fillBetween(c, bT, bB, off, win, w, h, sc, col) {
+            const s = w / win; c.beginPath();
+            for (let i = 0; i < win; i++) { const x = i * s, y = h / 2 + (bT[off + i] || 0) * h * sc; i === 0 ? c.moveTo(x, y) : c.lineTo(x, y); }
+            for (let i = win - 1; i >= 0; i--)c.lineTo(i * s, h / 2 + (bB[off + i] || 0) * h * sc);
+            c.closePath(); c.fillStyle = col; c.fill();
+        }
+
+        function drawScope(w, h, bOut, bA, bB, sc) {
+            cx2.clearRect(0, 0, w, h); gridLines(cx2, w, h, 0.03);
+            const win = bOut.length / 4, tA = zeroCross(bA);
+            fillBetween(cx2, bA, bOut, tA, win, w, h, sc, 'rgba(0,208,154,.05)');
+            fillBetween(cx2, bA, new Float32Array(bA.length), tA, win, w, h, sc, 'rgba(58,107,255,.035)');
+            // B dashed
+            cx2.setLineDash([5, 4]); cx2.strokeStyle = 'rgba(158,53,255,.35)'; cx2.lineWidth = 1.2;
+            const sb = w / win; cx2.beginPath();
+            for (let i = 0; i < win; i++) { const x = i * sb, y = h / 2 + (bB[tA + i] || 0) * h * sc; i === 0 ? cx2.moveTo(x, y) : cx2.lineTo(x, y); } cx2.stroke(); cx2.setLineDash([]);
+            waveTrace(cx2, bA, tA, win, w, h, sc, 'rgba(58,107,255,.9)', 1.8, 'rgba(58,107,255,.4)');
+            waveTrace(cx2, bOut, tA, win, w, h, sc, 'rgba(0,208,154,.95)', 2, 'rgba(0,208,154,.4)');
+            cx2.font = '11px "VT323",monospace'; cx2.textAlign = 'right';
+            const yA = h / 2 + (bA[tA + win - 1] || 0) * h * sc;
+            const yO = h / 2 + (bOut[tA + win - 1] || 0) * h * sc;
+            const yB = h / 2 + (bB[tA + win - 1] || 0) * h * sc;
+            cx2.fillStyle = 'rgba(58,107,255,.7)'; cx2.fillText('A', w - 4, Math.max(10, Math.min(h - 4, yA)));
+            cx2.fillStyle = 'rgba(158,53,255,.6)'; cx2.fillText('B', w - 4, Math.max(10, Math.min(h - 4, yB + 10)));
+            cx2.fillStyle = 'rgba(0,208,154,.85)'; cx2.fillText('∑', w - 4, Math.max(10, Math.min(h - 4, yO - 10)));
+            cx2.textAlign = 'left';
+        }
+
+        /* ─── Lissajous / Audio Imager ─────────────── */
+        const cvLissa = document.getElementById('cv-lissa');
+        const cxL = cvLissa.getContext('2d');
+        let lissaBuf = null, lissaCtx = null, lBW = 0, lBH = 0;
+
+        function drawLissa(w, h, bufA, bufOut, sc) {
+            if (lBW !== w || lBH !== h) {
+                lissaBuf = document.createElement('canvas'); lissaBuf.width = w; lissaBuf.height = h;
+                lissaCtx = lissaBuf.getContext('2d');
+                lissaCtx.fillStyle = '#000'; lissaCtx.fillRect(0, 0, w, h);
+                lBW = w; lBH = h;
+            }
+            lissaCtx.fillStyle = 'rgba(0,0,0,.12)'; lissaCtx.fillRect(0, 0, w, h);
+            const cx = w / 2, cy = h / 2, r = Math.min(w, h) * 0.43;
+            const step = Math.max(1, Math.floor(bufA.length / 300));
+            for (let i = 0; i < bufA.length; i += step) {
+                const x = cx + bufA[i] * sc * r;
+                const y = cy - bufOut[i] * sc * r;
+                const t = i / bufA.length;
+                lissaCtx.fillStyle = `rgba(0,208,154,${.08 + t * .6})`;
+                lissaCtx.fillRect(x - .5, y - .5, 1.5, 1.5);
+            }
+            lissaCtx.strokeStyle = 'rgba(255,255,255,.06)'; lissaCtx.lineWidth = 1; lissaCtx.setLineDash([]);
+            lissaCtx.beginPath(); lissaCtx.moveTo(cx, 0); lissaCtx.lineTo(cx, h); lissaCtx.stroke();
+            lissaCtx.beginPath(); lissaCtx.moveTo(0, cy); lissaCtx.lineTo(w, cy); lissaCtx.stroke();
+            cxL.clearRect(0, 0, w, h); cxL.drawImage(lissaBuf, 0, 0);
+            cxL.font = '11px "VT323",monospace'; cxL.fillStyle = 'rgba(0,208,154,.3)';
+            cxL.fillText('A', cx + r * .9, cy + 12); cxL.fillText('∑', cx - 12, cy - r * .9 + 4);
+            cxL.textAlign = 'center'; cxL.fillText('Audio Imager', cx, h - 4); cxL.textAlign = 'left';
+        }
+
+        /* ─── Spectrum Analyser ─────────────────────── */
+        const cvSpec = document.getElementById('cv-spec');
+        const cx4 = cvSpec.getContext('2d');
+
+        function drawSpectrum(w, h, freqData) {
+            cx4.clearRect(0, 0, w, h);
+            cx4.strokeStyle = 'rgba(255,255,255,.03)'; cx4.lineWidth = 1;
+            [h * .5].forEach(y => { cx4.beginPath(); cx4.moveTo(0, y); cx4.lineTo(w, y); cx4.stroke(); });
+            const bins = Math.min(512, freqData.length);
+            const barW = w / bins;
+            for (let i = 0; i < bins; i++) {
+                const v = freqData[i] / 255;
+                if (v < 0.01) continue;
+                const barH = v * h;
+                const t = i / bins;
+                let r, g, b;
+                if (t < 0.12) { r = 58; g = 107; b = 255; }
+                else if (t < 0.3) { r = 100 + t * 500; g = 80; b = 200 - t * 500; }
+                else if (t < 0.7) { r = 200; g = 140 + t * 100; b = 20; }
+                else { r = 20; g = 180 + t * 75; b = 140 + t * 80; }
+                cx4.fillStyle = `rgba(${r},${g},${b},0.85)`;
+                cx4.fillRect(i * barW, h - barH, Math.max(1, barW - 0.5), barH);
+                cx4.fillStyle = `rgba(${r},${g},${b},0.4)`;
+                cx4.fillRect(i * barW, h - barH - 1, Math.max(1, barW - 0.5), 1);
+            }
+            cx4.font = '10px "VT323",monospace'; cx4.fillStyle = 'rgba(255,255,255,.2)';
+            const sr = ctx ? ctx.sampleRate : 44100;
+            [[100, '100'], [1000, '1k'], [5000, '5k'], [10000, '10k'], [15000, '15k']].forEach(([f, lbl]) => {
+                const xi = Math.round(f / sr * 2 * freqData.length);
+                if (xi < bins) { const x = xi * barW; cx4.fillText(lbl, x, h - 2); }
+            });
+        }
+
+        /* ─── LFO Mini-Visualiser ───────────────────── */
+        const cvLfo = document.getElementById('cv-lfo');
+        const cxLfo = cvLfo.getContext('2d');
+
+        function drawLfoVis(w, h) {
+            cxLfo.clearRect(0, 0, w, h);
+            cxLfo.fillStyle = 'rgba(0,0,0,.0)'; cxLfo.fillRect(0, 0, w, h);
+            cxLfo.strokeStyle = 'rgba(255,255,255,.06)'; cxLfo.lineWidth = 1; cxLfo.setLineDash([]);
+            cxLfo.beginPath(); cxLfo.moveTo(0, h / 2); cxLfo.lineTo(w, h / 2); cxLfo.stroke();
+            cxLfo.strokeStyle = 'rgba(223,126,0,.75)'; cxLfo.lineWidth = 1.5; cxLfo.setLineDash([]);
+            cxLfo.shadowBlur = 8; cxLfo.shadowColor = 'rgba(223,126,0,.4)';
+            cxLfo.beginPath();
+            const type = S.lfo.type;
+            for (let i = 0; i <= w; i++) {
+                const ph = (i / w) * Math.PI * 4;
+                let v;
+                if (type === 'sine') v = Math.sin(ph);
+                else if (type === 'triangle') v = 2 * Math.abs((ph / Math.PI % 2) - 1) - 1;
+                else if (type === 'square') v = Math.sin(ph) >= 0 ? 1 : -1;
+                else v = ((ph / Math.PI % 2) - 1);
+                const y = h / 2 - v * h * 0.38;
+                i === 0 ? cxLfo.moveTo(i, y) : cxLfo.lineTo(i, y);
+            }
+            cxLfo.stroke(); cxLfo.shadowBlur = 0;
+            const elapsed = (performance.now() - audioStart) / 1000;
+            const rate = pct2lfo(S.lfo.ratePct);
+            const phase = ((elapsed * rate) % (2)) * 0.5;
+            const phX = phase * w;
+            cxLfo.strokeStyle = 'rgba(223,126,0,.35)'; cxLfo.lineWidth = 1; cxLfo.setLineDash([3, 3]);
+            cxLfo.beginPath(); cxLfo.moveTo(phX, 0); cxLfo.lineTo(phX, h); cxLfo.stroke();
+            cxLfo.setLineDash([]);
+            cxLfo.font = '11px "VT323",monospace'; cxLfo.fillStyle = 'rgba(223,126,0,.4)';
+            cxLfo.fillText(fmtLfo(rate), 3, h - 3);
+            cxLfo.textAlign = 'right'; cxLfo.fillText(S.lfo.target === 'off' ? 'inactive' : S.lfo.target, w - 3, h - 3); cxLfo.textAlign = 'left';
+        }
+
+        /* ─── Filter Response Curve ─────────────────── */
+        const cvFlt = document.getElementById('cv-flt');
+        const cxF = cvFlt.getContext('2d');
+
+        function drawFilterResp(w, h) {
+            cxF.clearRect(0, 0, w, h);
+            cxF.strokeStyle = 'rgba(255,255,255,.04)'; cxF.lineWidth = 1; cxF.setLineDash([]);
+            cxF.strokeStyle = 'rgba(255,255,255,.08)'; cxF.beginPath(); cxF.moveTo(0, h / 2); cxF.lineTo(w, h / 2); cxF.stroke();
+            [[h * .25, 'rgba(255,255,255,.03)'], [h * .75, 'rgba(255,255,255,.03)']].forEach(([y, c]) => {
+                cxF.strokeStyle = c; cxF.beginPath(); cxF.moveTo(0, y); cxF.lineTo(w, y); cxF.stroke();
+            });
+            const sr = ctx ? ctx.sampleRate : 44100;
+            cxF.strokeStyle = 'rgba(255,255,255,.03)';
+            [100, 1000, 5000, 10000].forEach(f => {
+                const x = Math.log10(f / 20) / Math.log10(sr / 40) * w;
+                cxF.beginPath(); cxF.moveTo(x, 0); cxF.lineTo(x, h); cxF.stroke();
+                cxF.font = '9px "VT323",monospace'; cxF.fillStyle = 'rgba(255,255,255,.18)';
+                cxF.fillText(f >= 1000 ? f / 1000 + 'k' : f, x + 2, h - 2);
+            });
+            cxF.font = '10px "VT323",monospace';
+            cxF.fillStyle = 'rgba(255,255,255,.15)'; cxF.fillText('0dB', 2, h / 2 - 2);
+            cxF.fillStyle = 'rgba(255,255,255,.1)'; cxF.fillText('+12', 2, h * .25 - 1); cxF.fillText('-12', 2, h * .75 - 1);
+
+            if (S.flt.type === 'bypass' || !filterMagArr) {
+                cxF.strokeStyle = 'rgba(209,46,70,.3)'; cxF.lineWidth = 1; cxF.setLineDash([4, 4]);
+                cxF.beginPath(); cxF.moveTo(0, h / 2); cxF.lineTo(w, h / 2); cxF.stroke(); cxF.setLineDash([]);
+                cxF.font = '11px "VT323",monospace'; cxF.fillStyle = 'rgba(209,46,70,.35)'; cxF.textAlign = 'center';
+                cxF.fillText('BYPASS', w / 2, h / 2 - 4); cxF.textAlign = 'left';
+                return;
+            }
+
+            cxF.beginPath(); cxF.moveTo(0, h / 2);
+            for (let i = 0; i < filterMagArr.length; i++) {
+                const x = i / filterMagArr.length * w;
+                const db = 20 * Math.log10(Math.max(0.0001, filterMagArr[i]));
+                const y = h / 2 - (db / 24) * h * 0.45;
+                i === 0 ? cxF.lineTo(x, Math.max(1, Math.min(h - 1, y))) : cxF.lineTo(x, Math.max(1, Math.min(h - 1, y)));
+            }
+            cxF.lineTo(w, h / 2); cxF.closePath();
+            const grad = cxF.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, 'rgba(209,46,70,.25)');
+            grad.addColorStop(0.5, 'rgba(209,46,70,.08)');
+            grad.addColorStop(1, 'rgba(209,46,70,.02)');
+            cxF.fillStyle = grad; cxF.fill();
+
+            cxF.beginPath(); cxF.strokeStyle = 'rgba(209,46,70,.85)'; cxF.lineWidth = 1.5;
+            cxF.shadowBlur = 8; cxF.shadowColor = 'rgba(209,46,70,.4)'; cxF.setLineDash([]);
+            for (let i = 0; i < filterMagArr.length; i++) {
+                const x = i / filterMagArr.length * w;
+                const db = 20 * Math.log10(Math.max(0.0001, filterMagArr[i]));
+                const y = h / 2 - (db / 24) * h * 0.45;
+                i === 0 ? cxF.moveTo(x, Math.max(1, Math.min(h - 1, y))) : cxF.lineTo(x, Math.max(1, Math.min(h - 1, y)));
+            }
+            cxF.stroke(); cxF.shadowBlur = 0;
+
+            const cutoff = pct2flt(S.flt.freqPct);
+            const cxPos = Math.log10(cutoff / 20) / Math.log10((ctx ? ctx.sampleRate : 44100) / 40) * w;
+            cxF.strokeStyle = 'rgba(209,46,70,.4)'; cxF.lineWidth = 1; cxF.setLineDash([3, 3]);
+            cxF.beginPath(); cxF.moveTo(cxPos, 0); cxF.lineTo(cxPos, h); cxF.stroke(); cxF.setLineDash([]);
+            cxF.font = '11px "VT323",monospace'; cxF.fillStyle = 'rgba(209,46,70,.6)';
+            cxF.fillText(fmtHz(cutoff), cxPos + 3, 10);
+        }
+
+        /* ═══════════════════════════════════════════════
+           MAIN DRAW LOOP
+        ═══════════════════════════════════════════════ */
+        const freqBins = new Uint8Array(1024);
+
+        function draw() {
+            const sw = cvScroll.offsetWidth, sh = cvScroll.offsetHeight;
+            if (sw !== scrollDW || sh !== scrollDH) { cvScroll.width = sw; cvScroll.height = sh; scrollDW = sw; scrollDH = sh; sBW = 0; sBH = 0; }
+
+            const pw = cvScope.width = cvScope.offsetWidth, ph = cvScope.height = cvScope.offsetHeight;
+            const lw = cvLissa.width = cvLissa.offsetWidth, lh = cvLissa.height = cvLissa.offsetHeight;
+            const spw = cvSpec.width = cvSpec.offsetWidth, sph = cvSpec.height = cvSpec.offsetHeight;
+            const flw = cvFlt.width = cvFlt.offsetWidth, flh = cvFlt.height = cvFlt.offsetHeight;
+            const lfw = cvLfo.width = cvLfo.offsetWidth, lfh = cvLfo.height = cvLfo.offsetHeight;
+
+            if (!S.playing) {
+                cx1.clearRect(0, 0, sw, sh); gridLines(cx1, sw, sh, 0.03);
+                cx2.clearRect(0, 0, pw, ph); gridLines(cx2, pw, ph, 0.03);
+                cxL.clearRect(0, 0, lw, lh);
+                cx4.clearRect(0, 0, spw, sph);
+                drawFilterResp(flw, flh);
+                drawLfoVis(lfw, lfh);
+                return requestAnimationFrame(draw);
+            }
+
+            const bOut = new Float32Array(anlOut.fftSize);
+            const bA = new Float32Array(anlA.fftSize);
+            const bB = new Float32Array(anlB.fftSize);
+            anlOut.getFloatTimeDomainData(bOut);
+            anlA.getFloatTimeDomainData(bA);
+            anlB.getFloatTimeDomainData(bB);
+
+            let pk = 0.015;
+            for (let i = 0; i < bOut.length; i++) if (Math.abs(bOut[i]) > pk) pk = Math.abs(bOut[i]);
+            const sc = 0.42 / pk;
+
+            renderScroll(sw, sh, bOut, bA);
+            drawScope(pw, ph, bOut, bA, bB, sc);
+            drawLissa(lw, lh, bA, bOut, sc);
+
+            anlSpec.getByteFrequencyData(freqBins);
+            drawSpectrum(spw, sph, freqBins);
+
+            drawFilterResp(flw, flh);
+            drawLfoVis(lfw, lfh);
+
+            requestAnimationFrame(draw);
+        }
+        requestAnimationFrame(draw);
+
+        /* ═══════════════════════════════════════════════
+           KNOBS
+        ═══════════════════════════════════════════════ */
+        function updateKnobUI(id, rawVal) {
+            const k = document.getElementById(id); if (!k) return;
+            const min = +k.dataset.min, max = +k.dataset.max;
+            k.style.transform = `rotate(${((rawVal - min) / (max - min)) * 270 - 135}deg)`;
+            const el = document.getElementById(id.replace('kn-', 'vl-')); if (!el) return;
+            if (id === 'kn-lfo-rate') { el.textContent = fmtLfo(pct2lfo(rawVal)); return; }
+            if (id === 'kn-flt-f') { el.textContent = fmtHz(pct2flt(rawVal)); return; }
+            if (id === 'kn-flt-g') { el.textContent = (rawVal >= 0 ? '+' : '') + Math.round(rawVal); return; }
+            if (id === 'kn-flt-q') { el.textContent = (+rawVal).toFixed(1); return; }
+            const isSnap = id.includes('oct') || id.includes('semi');
+            const isPct = id.includes('amt') || id.includes('master') || id.includes('drive');
+            el.textContent = (isSnap ? Math.round(rawVal) : Math.round(rawVal)) + (isPct ? '%' : '');
+        }
+
+        let activeK = null, dragY = 0;
+        function applyDelta(d) {
+            if (!activeK) return;
+            const min = +activeK.dataset.min, max = +activeK.dataset.max;
+            const range = max - min, sens = range / (range <= 25 ? 100 : 380);
+            let v = +activeK.dataset.v + d * sens;
+            v = Math.max(min, Math.min(max, v));
+            activeK.dataset.v = v; updateKnobUI(activeK.id, v); syncKnob(activeK.id, v);
+        }
+
+        document.querySelectorAll('.knob').forEach(k => {
+            updateKnobUI(k.id, +k.dataset.v);
+            k.onmousedown = e => { activeK = k; dragY = e.clientY; document.body.style.cursor = 'ns-resize'; e.preventDefault(); };
+            k.ontouchstart = e => { e.preventDefault(); activeK = k; dragY = e.touches[0].clientY; };
+            k.addEventListener('wheel', e => { e.preventDefault(); const p = activeK; activeK = k; applyDelta(e.deltaY < 0 ? 5 : -5); activeK = p; }, { passive: false });
+        });
+        window.onmousemove = e => { if (!activeK) return; applyDelta(dragY - e.clientY); dragY = e.clientY; };
+        window.addEventListener('touchmove', e => { if (!activeK) return; e.preventDefault(); applyDelta(dragY - e.touches[0].clientY); dragY = e.touches[0].clientY; }, { passive: false });
+        window.onmouseup = () => { activeK = null; document.body.style.cursor = 'default'; };
+        window.ontouchend = () => { activeK = null; };
+
+        function syncKnob(id, v) {
+            if (id === 'kn-a-oct') S.A.oct = Math.round(v);
+            if (id === 'kn-a-semi') S.A.semi = Math.round(v);
+            if (id === 'kn-b-oct') S.B.oct = Math.round(v);
+            if (id === 'kn-b-semi') S.B.semi = Math.round(v);
+            if (id === 'kn-mod-amt') S.B.amt = v;
+            if (id === 'kn-lfo-rate') S.lfo.ratePct = v;
+            if (id === 'kn-lfo-amt') S.lfo.amt = v;
+            if (id === 'kn-flt-f') S.flt.freqPct = v;
+            if (id === 'kn-flt-q') S.flt.q = v;
+            if (id === 'kn-flt-g') S.flt.gain = v;
+            if (id === 'kn-drive') S.fx.drive = v;
+            if (id === 'kn-master') S.fx.master = v / 100;
+
+            // Directly targets node params with native smoothing (prevents pops without rebuilding graph)
+            updateParamTargets();
+        }
+
+        document.querySelectorAll('.kval').forEach(el => {
+            el.ondblclick = () => {
+                const kId = el.id.replace('vl-', 'kn-'); const k = document.getElementById(kId); if (!k) return;
+                const inp = document.createElement('input'); inp.type = 'number'; inp.value = (+k.dataset.v).toFixed(2);
+                Object.assign(inp.style, { width: '58px', background: '#000', color: 'var(--amber)', border: '1px solid #3a6bff', padding: '1px 4px', fontSize: '.88rem', textAlign: 'center', fontFamily: '"VT323",monospace', outline: 'none' });
+                el.replaceWith(inp); inp.focus(); inp.select();
+                const commit = () => { let v = parseFloat(inp.value); if (isNaN(v)) v = +k.dataset.v; v = Math.max(+k.dataset.min, Math.min(+k.dataset.max, v)); k.dataset.v = v; inp.replaceWith(el); updateKnobUI(kId, v); syncKnob(kId, v); };
+                inp.onblur = commit; inp.onkeydown = e => { if (e.key === 'Enter') commit(); if (e.key === 'Escape') inp.replaceWith(el); };
+            };
+        });
+
+        /* ─── Wave toggles ──────────────────────────── */
+        document.querySelectorAll('.wave-strip').forEach(strip => {
+            strip.querySelectorAll('.wt').forEach(btn => {
+                btn.onclick = () => {
+                    strip.querySelector('.on').classList.remove('on'); btn.classList.add('on');
+                    if (strip.dataset.osc === 'a') S.A.type = btn.dataset.v;
+                    else if (strip.dataset.osc === 'b') S.B.type = btn.dataset.v;
+                    else if (strip.dataset.lfo) S.lfo.type = btn.dataset.v;
+                    updateAudio(); // Topology change: triggers fade envelope
+                };
+            });
+        });
+
+        /* ─── Selects ───────────────────────────────── */
+        document.getElementById('sel-route').onchange = e => { S.B.route = e.target.value; updateAudio(); };
+        document.getElementById('sel-lfo-tgt').onchange = e => { S.lfo.target = e.target.value; updateAudio(); };
+        document.getElementById('sel-flt').onchange = e => { S.flt.type = e.target.value; updateAudio(); };
+
+        /* ─── Power ─────────────────────────────────── */
+        function setPower(on) {
+            S.playing = on;
+            const b = document.getElementById('pwr'); b.textContent = on ? 'Power Off' : 'Power On'; b.classList.toggle('on', on);
+            document.getElementById('pwr-led').classList.toggle('on', on);
+            if (on) audioStart = performance.now();
+        }
+        document.getElementById('pwr').onclick = () => {
+            if (!ctx) { initAudio(); setPower(true); }
+            else if (S.playing) { ctx.suspend(); setPower(false); }
+            else { ctx.resume(); setPower(true); }
+        };
+
+        /* ─── Keyboard ──────────────────────────────── */
+        document.addEventListener('keydown', e => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+            if (e.key === ' ') { e.preventDefault(); document.getElementById('pwr').click(); }
+            if (e.key >= '1' && e.key <= '6') { if (!S.playing) { initAudio(); setPower(true); } applyPreset(+e.key - 1); }
+            if (e.key === 'ArrowUp') { e.preventDefault(); shiftRoot(e.shiftKey ? 12 : 1); }
+            if (e.key === 'ArrowDown') { e.preventDefault(); shiftRoot(e.shiftKey ? -12 : -1); }
+        });
+
+        /* ═══════════════════════════════════════════════
+           HOVER HELP SYSTEM
+        ═══════════════════════════════════════════════ */
+        const HELP = {
+            'root': { c: '', t: 'ROOT NOTE', d: 'The fundamental pitch both oscillators tune relative to. Both Osc A and B derive their frequency from here plus their individual octave/semitone offsets. Arrow keys shift it by semitone; Shift+Arrow shifts by a full octave.' },
+            'a-oct': { c: 'a', t: 'OSC A — OCTAVE', d: 'Shifts Oscillator A up or down in whole octave steps. Each octave doubles or halves the frequency. At 0 with root A4, Osc A plays 440 Hz. At +1: 880 Hz. At −1: 220 Hz.' },
+            'a-semi': { c: 'a', t: 'OSC A — SEMITONE', d: 'Fine-tunes Oscillator A in semitone steps (1/12 of an octave). Use this to set musical intervals: +7 = perfect fifth, +4 = major third, +3 = minor third, +12 = octave. Watch the note display update in real time.' },
+            'wave-a': { c: 'a', t: 'OSC A — WAVEFORM', d: 'Selects Osc A\'s waveform shape. Sine: pure single frequency, smooth. Square: rich odd harmonics, buzzy. Sawtooth: all harmonics, bright and brash. Triangle: odd harmonics but softer than square. Audible character changes dramatically with FM/PM modulation.' },
+            'b-oct': { c: 'b', t: 'OSC B — OCTAVE', d: 'Shifts Osc B\'s pitch in octaves relative to the root. At very low settings (−4 to −6), Osc B enters sub-audio range and behaves like an LFO modulator — creating slow cyclic effects rather than pitched tones.' },
+            'b-semi': { c: 'b', t: 'OSC B — SEMITONE', d: 'Fine-tunes Osc B in semitone steps. The C:M ratio badge shows B\'s frequency relative to A. Integer ratios (1:1, 1:2, 2:3) create harmonic overtone spectra. Non-integer ratios like 1:1.5 create metallic, bell-like, or dissonant inharmonic textures.' },
+            'wave-b': { c: 'b', t: 'OSC B — WAVEFORM', d: 'Selects Osc B\'s modulator waveform. In FM mode, the modulator\'s harmonic content shapes the resulting spectrum: a sine modulator creates a simple symmetric sideband pattern, while a sawtooth modulator creates an asymmetric, bright spectrum.' },
+            'mod-amt': { c: 'b', t: 'MOD AMOUNT', d: 'Controls how strongly Osc B affects Osc A. In AM: sideband depth. In FM: modulation index β — watch the β readout above the scope. In Ring Mod: wet/dry blend. In Parallel: relative output level of Osc B. Full left = Osc B off; full right = maximum effect.' },
+            'route': { c: 'b', t: 'MODULATION ROUTING', d: 'Sets how Osc B is applied to Osc A. Parallel: additive mix. AM: B controls A\'s amplitude → tremolo at low B rates, sidebands at audio rates. FM: B modulates A\'s frequency → rich harmonic spectra. PM: B modulates A\'s phase → brighter FM-like effect. Ring: multiplies both signals, cancelling originals.' },
+            'lfo-rate': { c: 'l', t: 'LFO — RATE', d: 'Controls LFO speed from 0.04 Hz (one cycle per 25 seconds) to ~20 Hz (entering audio rate). The mini waveform below shows the current shape and a moving phase cursor. Slow rates create gradual sweeps; rates above 20 Hz create audio effects indistinguishable from FM/AM modulation.' },
+            'lfo-amt': { c: 'l', t: 'LFO — AMOUNT', d: 'Sets the modulation depth. At 0% the LFO does nothing. At 100% it applies the full range: vibrato = full pitch swing, tremolo = amplitude from 0 to full, filter sweep = full cutoff range, mod depth = full oscillator modulation range.' },
+            'lfo-tgt': { c: 'l', t: 'LFO — TARGET', d: 'Vibrato: cyclically varies Osc A\'s pitch — classic performance expression effect. Tremolo: rhythmically pumps the volume. Filter Sweep: moves the filter cutoff up and down — the classic \"wah\" or \"envelope\" effect. Mod Depth: rhythmically varies the AM/FM/PM/Ring modulation amount for complex dynamic timbres.' },
+            'wave-lfo': { c: 'l', t: 'LFO — WAVEFORM', d: 'Sine: smooth, natural-sounding cyclic variation. Triangle: similar to sine but with linear slopes — slightly harder character. Square: abrupt switching between two states — good for tremolos and on/off gating effects. Sawtooth: ramps up then drops — creates a \"ratchet\" or \"retrigger\" character.' },
+            'flt-type': { c: 'f', t: 'FILTER TYPE', d: 'Low-Pass: attenuates frequencies above the cutoff — the classic synth filter sound, good for making bright sources warm. High-Pass: attenuates below cutoff — thins out the sound, good for bass removal. Band-Pass: passes only a frequency band. Notch: creates a sharp dip. Peaking EQ: boosts or cuts a frequency band by the Gain amount.' },
+            'flt-f': { c: 'f', t: 'FILTER — CUTOFF FREQUENCY', d: 'The key frequency of the filter\'s effect. In Low-Pass mode: frequencies below this pass through; above are attenuated. Watch the frequency response curve update in real time as you turn this knob. The log scale matches how we perceive pitch — octave intervals are equal distances along the horizontal axis.' },
+            'flt-q': { c: 'f', t: 'FILTER — RESONANCE / Q', d: 'Sharpness of the filter response at the cutoff. Low Q (0.5–2): gentle, gradual rolloff. Medium Q (2–8): a characteristic resonant peak appears at the cutoff — the synth filter\'s signature sound. High Q (8–20): sharp, potentially self-oscillating peak. In the Peaking EQ mode, Q controls the width of the boost/cut bell.' },
+            'flt-g': { c: 'f', t: 'FILTER — GAIN', d: 'Controls boost or cut in dB at the center frequency. Primarily affects the Peaking EQ mode, where it sets the bell amplitude (positive = boost, negative = cut). Also affects the notch and other modes slightly. Has no visible effect in Bypass mode.' },
+            'drive': { c: 'g', t: 'GLOBAL — DRIVE (SATURATION)', d: 'Applies tanh hyperbolic tangent soft-clipping waveshaping. At 1–20%: subtle harmonic warmth — adds mild odd harmonics that \"glue\" the sound. 20–50%: clear saturation, noticeable tone change. 60–100%: heavy distortion. A compressor follows this stage so the overall level stays controlled even at high Drive settings.' },
+            'master': { c: 'g', t: 'GLOBAL — MASTER VOLUME', d: 'Final output level with logarithmic (perceptual) taper so the control feels natural throughout its range. The built-in compressor (3:1 ratio, −12 dB threshold) runs before this stage, preventing bass-heavy patches from overpowering treble-dominant ones. Set this to your comfort level.' },
+            'vis-scroll': { c: '', t: 'CHART RECORDER', d: 'A continuously scrolling timeline of the waveform, similar to a DAW track view. Shows Osc A (ghosted blue) and the final mixed Output (solid teal). Perfect for seeing slow amplitude changes like LFO tremolo sweeps.' },
+            'vis-scope': { c: '', t: 'OSCILLOSCOPE', d: 'A real-time triggered waveform view. It locks onto the zero-crossing of Osc A to keep the display stable. Shows Osc A (blue), Osc B (purple dashed), and the final Output (teal). Great for visualizing FM wave folding.' },
+            'vis-lissa': { c: '', t: 'AUDIO IMAGER (LISSAJOUS)', d: 'Plots Osc A on the X-axis against the final Output on the Y-axis. Creates Lissajous figures that visualize the phase and harmonic relationship between the carrier and the result. Complex FM creates dense, shifting webs.' },
+            'vis-spec': { c: '', t: 'SPECTRUM ANALYSER', d: 'Shows the frequency content of the final output across the human hearing range (logarithmic scale). Blue = Sub/Bass, Amber = Mids, Teal = Highs. Watch harmonics appear dynamically when applying FM, AM, or Drive.' }
+        };
+
+        function initHelp() {
+            const panel = document.getElementById('help-panel');
+            const titleEl = document.getElementById('help-title');
+            const textEl = document.getElementById('help-text');
+            document.querySelectorAll('[data-hk]').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    const key = el.dataset.hk;
+                    const info = HELP[key];
+                    if (!info) return;
+                    titleEl.textContent = info.t;
+                    textEl.textContent = info.d;
+                    panel.className = '';
+                    if (info.c) panel.classList.add('hl-' + info.c);
+                });
+            });
+        }
+        initHelp();
+    </script>
 </body>
+
 </html>
